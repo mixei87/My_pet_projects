@@ -35,20 +35,18 @@ def count_one_half_row(y, x):
     else:
         side_board = 'right'
     key = f'{y+1}_{x}'
-    value = [[x for x in range(1, count_chairs+1)], side_board, place_priority]
-    half_row_chairs[key] = value
-    return key, value
+    if count_chairs > 0:
+        half_row_chairs[key] = [
+            [x for x in range(1, count_chairs+1)], side_board, place_priority]
+    else:
+        if key in half_row_chairs:
+            del half_row_chairs[key]
 
 
 half_row_chairs = {}
 for i in range(len(board_plane)):
     for j in range(2):
-        k, v = count_one_half_row(i, j)
-
-# test_half_row_chairs = {'1_0':  [[1, 2, 3], 'left', ['aisle', 'window']], '1_1': [[1], 'right', ['aisle', 'window']],
-#                         '2_0': [[1], 'left', ['window']], '2_1': [[1, 2, 3], 'right', ['aisle', 'window']],
-#                         '3_0':  [[1], 'left', ['aisle', 'window']], '3_1': [[1], 'right', ['aisle']],
-#                         '4_0': [[1, 2, 3], 'left', ['aisle', 'window']], '4_1': [[1, 2, 3], 'right', ['aisle', 'window']]}
+        count_one_half_row(i, j)
 
 
 def combine_capacity(val):
@@ -57,22 +55,15 @@ def combine_capacity(val):
 
 def fill_capacity_pass_for_1_row(k_half_row, val_half_row):
     for i in combine_capacity(val_half_row):
-        if i not in capacity_passengers:
-            capacity_passengers[i] = k_half_row
+        if capacity_passengers.get(i) == None:
+            capacity_passengers[i] = []
+        capacity_passengers[i].append(k_half_row)
 
 
 # init of capacity_passsengers
 capacity_passengers = {}
 for key_half_row, value_half_row in half_row_chairs.items():
     fill_capacity_pass_for_1_row(key_half_row, value_half_row)
-
-for k, v in half_row_chairs.items():
-    print(f'{k}: {v}')
-print('-' * 70)
-for k, v in capacity_passengers.items():
-    print(f'{k}: {v}')
-
-# print(group_passengers)
 
 letters_on_row = {0: 'A', 1: 'B', 2: 'C', 4: 'D', 5: 'E', 6: 'F'}
 seats_on_row = {'left': {'window': 0, 'aisle': 2},
@@ -101,7 +92,7 @@ def fill_places_on_board(row, col, group_p):
 
 for group in group_passengers:
     if group in capacity_passengers:
-        finded_row = capacity_passengers[group]
+        finded_row = capacity_passengers[group][0]
         # удаляем из capacity_passsengers старые значения
         combination_capacity = combine_capacity(half_row_chairs[finded_row])
         # функция поиска и заполнения свободных мест в указанной области самолета: capacity_passengers[group]
@@ -113,10 +104,18 @@ for group in group_passengers:
         print(f'Passengers can take seats:', *places)
         print_board_plane()
         # новая разметка вместимости этой области самолёта
-        k_half_row, val_half_row = count_one_half_row(y, x)
+        count_one_half_row(y, x)
         # надо внести в capacity_passsengers все недостающие ключи
-        # for j in combination_capacity:
-        #     del capacity_passengers[j]
-        fill_capacity_pass_for_1_row(k_half_row, val_half_row)
+        if finded_row in half_row_chairs:
+            new_combination_capacity = combine_capacity(
+                half_row_chairs[finded_row])
+        else:
+            new_combination_capacity = []
+        for i in combination_capacity:
+            if i not in new_combination_capacity:
+                if len(capacity_passengers[i]) > 1:
+                    capacity_passengers[i].remove(finded_row)
+                else:
+                    del capacity_passengers[i]
     else:
         print('Cannot fulfill passengers requirements')
