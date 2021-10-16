@@ -1,16 +1,12 @@
-reader = open('input.txt', 'r')
-n = int(reader.readline().strip())
+from sys import stdin
+n = int(stdin.readline())
 p = {}
 
 for k in range(n):
-    x1, y1, x2, y2 = [int(n) for n in reader.readline().split(" ")]
+    x1, y1, x2, y2 = list(map(int, stdin.readline().split()))
     for i in range(x1, x2):
         for j in range(y1, y2):
-            p[str(i) + str(j)] = k
-reader.close()
+            p['{}{}'.format(i, j)] = k
 
-tmp = [k for k in p.values()]
-writer = open('output.txt', 'w')
 for i in range(n):
-    writer.write(f'{tmp.count(i)}\n')
-writer.close()
+    print(list(k for k in p.values()).count(i))
