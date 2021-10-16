@@ -8,9 +8,9 @@ for k in range(n):
         for j in filter(lambda y: y != 0, range(y1, y2+1)):
             photo_pixels[(i, j)] = k
 
-tmp = [i for i in photo_pixels.values()]
 for i in range(n):
-    counter = tmp.count(i)
+    counter = 0
+    for j in photo_pixels.values():
+        if j == i:
+            counter += 1
     print(counter)
-    for j in range(counter):
-        tmp.remove(i)
