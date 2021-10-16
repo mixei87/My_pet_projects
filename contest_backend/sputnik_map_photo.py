@@ -9,6 +9,5 @@ for k in range(n):
             if i != 0 and j != 0:
                 photo_pixels[(i, j)] = k
 
-actual_number_square = [k for k in photo_pixels.values()]
 for i in range(n):
-    print(actual_number_square.count(i))
+    print([k for k in photo_pixels.values()].count(i))
