@@ -1,14 +1,16 @@
 from sys import stdin
-a = [i for i in stdin.readline().strip()]
-b = None
-for b in stdin.readline().strip():
-    if b in a:
-        a.remove(b)
+a = {}
+for i in stdin.readline().strip():
+    a[i] = a.get(i, 0) + 1
+b = {}
+for i in stdin.readline().strip():
+    if i in a:
+        b[i] = b.get(i, 0) + 1
     else:
         print(0)
         break
 else:
-    if len(a) == 0 and not isinstance(b, int):
+    if a == b:
         print(1)
     else:
         print(0)
