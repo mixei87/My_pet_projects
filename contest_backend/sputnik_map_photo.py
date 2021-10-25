@@ -1,5 +1,5 @@
 # from sys import stdin
-reader = open('input.txt', 'r')
+reader = open('input_sputnik_map_photo.txt', 'r')
 # n = int(stdin.readline())
 n = int(reader.readline())
 
@@ -77,10 +77,10 @@ def change_rect(temp, curr):
         photo.tmp_add_coords.append((x1_t, y1_t, x2, y1))
         photo.tmp_add_coords.append((x2, y1_t, x2_t, y2_t))
     elif x1_t < x1 < x2_t <= x2 and y1 <= y1_t < y2 < y2_t:
-        photo.tmp_add_coords.append((x1_t, y1_t, x1, y1_t))
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y2_t))
         photo.tmp_add_coords.append((x1, y2, x2_t, y2_t))
     elif x1_t < x1 < x2_t <= x2 and y1_t < y1 < y2_t <= y2:
-        photo.tmp_add_coords.append((x1_t, y1_t, x1, y1_t))
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y2_t))
         photo.tmp_add_coords.append((x1, y1_t, x2_t, y1))
     # 3 области
     elif x1 <= x1_t < x2 < x2_t and y1_t < y1 < y2 < y2_t:
@@ -118,15 +118,14 @@ for current in reversed(photo.map_coords):
                 if s_new == 0:
                     break
                 change_rect(template, current)
-        if photo.tmp_remove_coords:
+        else:
             for template_remove in photo.tmp_remove_coords:
                 photo.set_coords.remove(template_remove)
-            photo.tmp_remove_coords.clear()
-        if photo.tmp_add_coords:
             for template_add in photo.tmp_add_coords:
                 photo.set_coords.add(template_add)
-            photo.tmp_add_coords.clear()
-        photo.set_coords.add(current)
+            photo.set_coords.add(current)
+        photo.tmp_remove_coords.clear()
+        photo.tmp_add_coords.clear()
     photo.res.append(s_new)
 for k in reversed(photo.res):
     print(k)
