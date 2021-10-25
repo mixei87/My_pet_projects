@@ -1,72 +1,132 @@
-from sys import stdin
-n = int(stdin.readline())
+# from sys import stdin
+reader = open('input.txt', 'r')
+# n = int(stdin.readline())
+n = int(reader.readline())
 
 
 class Photo:
-    __slots__ = ('map_coords', 'set_coords', 'tmp_coords', 'res')
+    __slots__ = ('map_coords', 'set_coords',
+                 'tmp_add_coords', 'tmp_remove_coords', 'res')
 
     def __init__(self):
         self.map_coords = []
         self.set_coords = set()
-        self.tmp_coords = []
+        self.tmp_add_coords = []
+        self.tmp_remove_coords = []
         self.res = []
 
 
 photo = Photo()
-photo.map_coords = [tuple([int(i) for i in stdin.readline().split()])
+# photo.map_coords = [tuple([int(i) for i in stdin.readline().split()])
+#                     for k in range(n)]
+photo.map_coords = [tuple([int(i) for i in reader.readline().split()])
                     for k in range(n)]
 
 
-def square_new(rect):
+def square_rect(rect):
     return (rect[2]-rect[0])*(rect[3]-rect[1])
+
+
+def length_one_coordinate(z1_t, z2_t, z1, z2):
+    len = 0
+    if z1_t < z1 <= z2 < z2_t:
+        len = z2 - z1
+    elif z1 <= z1_t <= z2 <= z2_t:
+        len = z2 - z1_t
+    elif z1_t <= z1 <= z2_t <= z2:
+        len = z2_t - z1
+    elif z1 <= z1_t <= z2_t <= z2:
+        len = z2_t - z1_t
+    return len
 
 
 def square_intersection(temp, curr):
     x1_t, y1_t, x2_t, y2_t = temp[0], temp[1], temp[2], temp[3]
     x1, y1, x2, y2 = curr[0], curr[1], curr[2], curr[3]
-    a = b = 0
-    if x1_t < x1 <= x2 < x2_t:
-        a = x2 - x1
-    elif x1 <= x1_t <= x2 <= x2_t:
-        a = x2 - x1_t
-    elif x1_t <= x1 <= x2_t <= x2:
-        a = x2_t - x1
-    elif x1 <= x1_t <= x2_t <= x2:
-        a = x2_t - x1_t
-    if y1_t <= y1 <= y2 <= y2_t:
-        b = y2 - y1
-    elif y1 <= y1_t <= y2 <= y2_t:
-        b = y2 - y1_t
-    elif y1_t <= y1 <= y2_t <= y2:
-        b = y2_t - y1
-    else:
-        b = y2_t - y1_t
+    a = length_one_coordinate(x1_t, x2_t, x1, x2)
+    b = length_one_coordinate(y1_t, y2_t, y1, y2)
     if a < 0 or b < 0:
         return 0
     return a * b
 
 
-photo.set_coords = set()
-for current in reversed(photo.map_coords):
-    s_new = square_new(current)
-    # ненулевая площадь
-    if s_new:
-        photo.tmp_coords = []
-        for template in photo.set_coords:
-            s_new -= square_intersection(template, current)
+def change_rect(temp, curr):
+    '''разбить исходную область на 1, 2 или 3 новых области'''
+    x1_t, y1_t, x2_t, y2_t = temp[0], temp[1], temp[2], temp[3]
+    x1, y1, x2, y2 = curr[0], curr[1], curr[2], curr[3]
+    # одна область
+    if x1 <= x1_t < x2 < x2_t and y1 <= y1_t <= y2_t <= y2:
+        photo.tmp_add_coords.append((x2, y1_t, x2_t, y2_t))
+    elif x1_t < x1 < x2_t <= x2 and y1 <= y1_t <= y2_t <= y2:
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y2_t))
+    elif x1 <= x1_t <= x2_t <= x2 and y1 <= y1_t < y2 < y2_t:
+        photo.tmp_add_coords.append((x1_t, y2, x2_t, y2_t))
+    elif x1 <= x1_t <= x2_t <= x2 and y1_t < y1 < y2_t <= y2:
+        photo.tmp_add_coords.append((x1_t, y1_t, x2_t, y1))
+    # две области
+    elif x1_t < x1 < x2 < x2_t and y1 <= y1_t <= y2_t <= y2:
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y2_t))
+        photo.tmp_add_coords.append((x2, y1_t, x2_t, y2_t))
+    elif x1 <= x1_t <= x2_t <= x2 and y1_t < y1 < y2 < y2_t:
+        photo.tmp_add_coords.append((x1_t, y1_t, x2_t, y1))
+        photo.tmp_add_coords.append((x1_t, y2, x2_t, y2_t))
+    elif x1 <= x1_t < x2 < x2_t and y1 <= y1_t < y2 < y2_t:
+        photo.tmp_add_coords.append((x1_t, y2, x2, y2_t))
+        photo.tmp_add_coords.append((x2, y1_t, x2_t, y2_t))
+    elif x1 <= x1_t < x2 < x2_t and y1_t < y1 < y2_t <= y2:
+        photo.tmp_add_coords.append((x1_t, y1_t, x2, y1))
+        photo.tmp_add_coords.append((x2, y1_t, x2_t, y2_t))
+    elif x1_t < x1 < x2_t <= x2 and y1 <= y1_t < y2 < y2_t:
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y1_t))
+        photo.tmp_add_coords.append((x1, y2, x2_t, y2_t))
+    elif x1_t < x1 < x2_t <= x2 and y1_t < y1 < y2_t <= y2:
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y1_t))
+        photo.tmp_add_coords.append((x1, y1_t, x2_t, y1))
+    # 3 области
+    elif x1 <= x1_t < x2 < x2_t and y1_t < y1 < y2 < y2_t:
+        photo.tmp_add_coords.append((x1_t, y1_t, x2, y1))
+        photo.tmp_add_coords.append((x1_t, y2, x2, y2_t))
+        photo.tmp_add_coords.append((x2, y1_t, x2_t, y2_t))
+    elif x1_t < x1 < x2_t <= x2 and y1_t < y1 < y2 < y2_t:
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y2_t))
+        photo.tmp_add_coords.append((x1, y1_t, x2_t, y1))
+        photo.tmp_add_coords.append((x1, y2, x2_t, y2_t))
+    elif x1_t < x1 < x2 < x2_t and y1_t < y1 < y2_t <= y2:
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y2_t))
+        photo.tmp_add_coords.append((x1, y1_t, x2, y1))
+        photo.tmp_add_coords.append((x2, y1_t, x2_t, y2_t))
+    elif x1_t < x1 < x2 < x2_t and y1 <= y1_t < y2 < y2_t:
+        photo.tmp_add_coords.append((x1_t, y1_t, x1, y2_t))
+        photo.tmp_add_coords.append((x1, y2, x2, y2_t))
+        photo.tmp_add_coords.append((x2, y1_t, x2_t, y2_t))
+    photo.tmp_remove_coords.append(template)
 
-            # !!! fix condition
-            if current > template:
-                photo.tmp_coords.append(template)
-        for template in photo.tmp_coords:
-            photo.set_coords.remove(template)
+
+for current in reversed(photo.map_coords):
+    if current not in photo.set_coords:
+        s_new = square_rect(current)
+    else:
+        s_new = 0
+    # проверка на ненулевую площадь
+    if s_new:
+        for template in photo.set_coords:
+            s_inter = square_intersection(template, current)
+            # если есть пересечение
+            if s_inter:
+                s_new -= s_inter
+                # если фигуры одинаковые или новая полностью входит в старую
+                if s_new == 0:
+                    break
+                change_rect(template, current)
+        if photo.tmp_remove_coords:
+            for template_remove in photo.tmp_remove_coords:
+                photo.set_coords.remove(template_remove)
+            photo.tmp_remove_coords.clear()
+        if photo.tmp_add_coords:
+            for template_add in photo.tmp_add_coords:
+                photo.set_coords.add(template_add)
+            photo.tmp_add_coords.clear()
         photo.set_coords.add(current)
     photo.res.append(s_new)
-    # for tmp in [f'{i}{j}' for i in range(map_coords[0], map_coords[2]) for j in range(map_coords[1], map_coords[3])]:
-    #     if tmp not in photo.tpl:
-    #         photo.tpl += (tmp,)
-    #         photo.num.append(k)
-    #     else:
-    #         photo.num[photo.tpl.index(tmp)] = k
 for k in reversed(photo.res):
     print(k)
