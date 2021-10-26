@@ -1,24 +1,22 @@
-# from sys import stdin
 reader = open('input_sputnik_map_photo.txt', 'r')
-# n = int(stdin.readline())
 n = int(reader.readline())
 
 
 class Photo:
     __slots__ = ('map_coords', 'set_coords',
-                 'tmp_add_coords', 'tmp_remove_coords', 'res')
+                 'tmp_add_coords', 'tmp_remove_coords', 'tmp_sides', 'res', 'sides')
 
     def __init__(self):
         self.map_coords = []
         self.set_coords = set()
         self.tmp_add_coords = []
         self.tmp_remove_coords = []
+        self.tmp_sides = []
         self.res = []
+        self.sides = {}
 
 
 photo = Photo()
-# photo.map_coords = [tuple([int(i) for i in stdin.readline().split()])
-#                     for k in range(n)]
 photo.map_coords = [tuple([int(i) for i in reader.readline().split()])
                     for k in range(n)]
 
@@ -102,6 +100,11 @@ def change_rect(temp, curr):
     photo.tmp_remove_coords.append(template)
 
 
+def find_sides_rect(arr):
+    return (arr[0], arr[1], arr[2], arr[1]), (arr[0], arr[1], arr[0], arr[3]),\
+        (arr[0], arr[3], arr[2], arr[3]), (arr[2], arr[1], arr[2], arr[3])
+
+
 for current in reversed(photo.map_coords):
     if current not in photo.set_coords:
         s_new = square_rect(current)
@@ -119,10 +122,28 @@ for current in reversed(photo.map_coords):
                     break
                 change_rect(template, current)
         else:
-            for template_remove in photo.tmp_remove_coords:
-                photo.set_coords.remove(template_remove)
-            for template_add in photo.tmp_add_coords:
-                photo.set_coords.add(template_add)
+            for template in photo.tmp_remove_coords:
+                photo.set_coords.remove(template)
+                # !!! FIX
+                #  надо удалять соответсвующие стороны в словаре
+                # find_sides_rect(template)
+            for template in photo.tmp_add_coords:
+                for side in find_sides_rect(template):
+                    if side in photo.sides:
+                        pass
+                        # !!! FIX
+                        # нужно соединить 2 прямоугольника в один и:
+                        # обновить словарь с новыми сторонами
+                        # удалить координаты старого прямоугольника из сета
+                        # добавить координаты нового прямоугольника в сет
+                        break
+                    else:
+                        photo.tmp_sides.append(side)
+                else:
+                    photo.sides.update({key: val for key, val in zip(
+                        photo.tmp_sides, (template + end for end in (('d',), ('l',), ('u',), ('r',))))})
+                    photo.tmp_sides.clear()
+                    photo.set_coords.add(template)
             photo.set_coords.add(current)
         photo.tmp_remove_coords.clear()
         photo.tmp_add_coords.clear()
