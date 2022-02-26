@@ -1,12 +1,13 @@
-.PHONY: all
+.PHONY: all clean rebuild
 
 all: clean
-	gcc -g -c random_arrays.c -o random_arrays.o
-	gcc -g main.c random_arrays.o -o main.out
-	./main.out
+	gcc -c random_arrays.c -o random_arrays.o
+	gcc main.c random_arrays.o -o main.out	
 
 clean:
 	rm -rf *.o *.out
+
+rebuild: clean all
 
 git:
 	git add .

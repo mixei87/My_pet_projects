@@ -4,24 +4,19 @@
 #include <stdlib.h>
 #include <time.h>
 int NUM;  // how many elements (max) need generate
-
-// typedef struct row {
-//   // for generate rows
-//   int *m;
-// } rows;
-
-typedef struct array_of_array {
-  // for generate arrays
-  int current_pos;
-  int **p;
-  // rows r;
-  // m - size of rows
-  int m;
-  // k - size of columns
-  int k;
+typedef struct array {
+  int num;
+  int* vector;
 } arrays;
 
 // n > 0
-void generate_arrays(int n);
-void generate_random_array(arrays **A);
+arrays* generate_arrays(int n);
+void create_array(int count, arrays* arr, arrays* hash_table);
+int check_size_arr(int n, arrays* hash_table);
+void write_size_arr(int n, arrays* hash_table);
+void fill_array(arrays* arr);
+// direction (1: ascending, -1: descending)
+void fast_sort(arrays* arr, int left, int right, int dir);
+void remove_arrays(arrays* arr, int n);
+
 #endif  // RANDOM_ARRAYS_H_
