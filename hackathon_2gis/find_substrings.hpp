@@ -12,4 +12,6 @@ void CreateStringFromFile(string *str, string filename);
 void CreateHashTableNeedle(string substr_needle, int num_keys,
                            tuple<bool, size_t, string, size_t> *hash_needle,
                            int pos_str);
+int FindSubstringInHashTable(string substr_haystack, int num_keys,
+                             tuple<bool, size_t, string, size_t> *hash_needle);
 #endif
