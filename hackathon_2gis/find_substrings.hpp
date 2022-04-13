@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 using namespace std;
 void CreateStringFromFile(string *str, string filename);
 #endif
