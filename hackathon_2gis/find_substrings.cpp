@@ -1,27 +1,25 @@
-#include <functional>
-#include <iostream>
-#include <string>
+#include "find_substrings.hpp"
 
 int main() {
-  using std::cin;
-  using std::cout;
-  using std::endl;
-  using std::hash;
-  using std::string;
-  string haystack;
-  cout << "Input haystack:\n";
-  getline(cin, haystack);
-  // cout << "Input needle:\n";
-  // string needle;
-  // getline(cin, needle);
+  string haystack, needle;
+  CreateStringFromFile(&haystack, "haystack.txt");
+  CreateStringFromFile(&needle, "needle.txt");
   // cout << "Input threshold:\n";
-  // int threshold;
+  int threshold = 3;  // test value
   // cin >> threshold;
-  cout << "Hello, Hackathon!\n"
-       << haystack << endl /*
-        << needle << endl
-        << threshold << endl*/
-      ;
-  cout << hash<string>{}(haystack);
+  cout << haystack << endl << needle << endl << threshold << endl;
+  // cout << hash<string>{}(haystack);
   return 0;
+}
+
+void CreateStringFromFile(string *str_out, string filename) {
+  stringstream buff_string;
+  ifstream file(filename, ios_base ::in);
+  if (file.is_open()) {
+    buff_string << file.rdbuf();
+    *str_out = buff_string.str();
+    file.close();
+    return;
+  }
+  exit(1);
 }
