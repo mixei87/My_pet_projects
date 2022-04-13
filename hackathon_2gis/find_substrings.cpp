@@ -8,23 +8,39 @@ int main() {
   int threshold = 3;  // test value
   // cin >> threshold;
   cout << haystack << endl << needle << endl << threshold << endl;
-  // cout << hash<string>{}(haystack);
 
   int needle_length = needle.length(),
       needle_max_num_lexem = needle_length - threshold + 1,
       num_keys = needle_max_num_lexem * 2;
-  string keys_needle[num_keys];
-  size_t hash_needle[num_keys], pos_needle[num_keys];
-
-  for (int i = 0; i < needle_max_num_lexem; i++) {
-    string substr_needle = needle.substr(i, threshold);
-    keys_needle[i] = substr_needle;
-    hash_needle[i] = hash<string>{}(substr_needle);
-    pos_needle[i] = i;
-    cout << keys_needle[i] << "|" << hash_needle[i] << "|" << pos_needle[i]
-         << endl;
+  cout << "num_keys: " << num_keys << endl;
+  tuple<bool, size_t, string, size_t> hash_needle[num_keys];
+  for (int i = 0; i < num_keys; i++) {
+    get<0>(hash_needle[i]) = false;
+  }
+  for (int pos_str = 0; pos_str < needle_max_num_lexem; pos_str++) {
+    string substr_needle = needle.substr(pos_str, threshold);
+    CreateHashTableNeedle(substr_needle, num_keys, hash_needle, pos_str);
   }
   return 0;
+}
+
+void CreateHashTableNeedle(string substr_needle, int num_keys,
+                           tuple<bool, size_t, string, size_t> *hash_needle,
+                           int pos_str) {
+  size_t hash_code = hash<string>{}(substr_needle);
+  int pos_hash_table = hash_code % num_keys;
+  while (get<0>(hash_needle[pos_hash_table]) == true) {
+    if (get<1>(hash_needle[pos_hash_table]) == hash_code &&
+        get<2>(hash_needle[pos_hash_table]) == substr_needle)
+      break;
+    pos_hash_table = (pos_hash_table + 1) % num_keys;
+  }
+  hash_needle[pos_hash_table] =
+      make_tuple(true, hash_code, substr_needle, pos_str);
+
+  cout << pos_hash_table << "|" << get<1>(hash_needle[pos_hash_table]) << "|"
+       << get<2>(hash_needle[pos_hash_table]) << "|"
+       << get<3>(hash_needle[pos_hash_table]) << endl;
 }
 
 void CreateStringFromFile(string *str_out, string filename) {
