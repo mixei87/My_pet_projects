@@ -24,14 +24,9 @@ int main() {
     get<0>(hash_needle[i]) = false;
   }
   // cout << needle_max_num_lexem << endl;
-  for (int pos_str = 0; pos_str < 5 /* needle_max_num_lexem*/; pos_str++) {
+  for (int pos_str = 0; pos_str < needle_max_num_lexem; pos_str++) {
     // cout << needle.size() << endl;
     string substr_needle = needle.substr(pos_str, threshold);
-    // string substr_needle;
-    // copy(needle.begin() + pos_str, needle.begin() + pos_str + threshold,
-    //      substr_needle.begin());
-    // cout << substr_needle << endl;
-    // string substr_needle(needle, min(needle_length, threshold));
     CreateHashTableNeedle(substr_needle, num_keys, hash_needle, pos_str);
   }
 
