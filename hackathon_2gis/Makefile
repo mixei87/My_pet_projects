@@ -1,5 +1,7 @@
+.PHONY: all push
+
 all:
-	g++ find_substrings.cpp
+	g++ find_substrings.cpp -o a.out
 	./a.out
 push:
 	git add .
