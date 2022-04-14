@@ -6,12 +6,13 @@
 //
 int main() {
   string haystack, needle;
-  // Данные строк хранятся в соответсвующих файлах
-  CreateStringFromFile(&haystack, "haystack.txt");
-  CreateStringFromFile(&needle, "needle.txt");
-  // cout << "Input threshold:\n";
-  int threshold = 3;  // test value
-  // cin >> threshold;
+  // Данные строк хранятся в соответствующих файлах
+  CreateStringFromFile(&haystack, "data/haystack.txt");
+  CreateStringFromFile(&needle, "data/needle.txt");
+  cout << "Input threshold:\n";
+  int threshold = 0;
+  // Ввод неотрицательного числа
+  cin >> threshold;
   size_t haystack_length = haystack.length();
   int needle_length = needle.length();
   CheckInputData(haystack_length, needle_length, threshold);
@@ -23,9 +24,7 @@ int main() {
   for (int i = 0; i < num_keys; i++) {
     get<0>(hash_needle[i]) = false;
   }
-  // cout << needle_max_num_lexem << endl;
   for (int pos_str = 0; pos_str < needle_max_num_lexem; pos_str++) {
-    // cout << needle.size() << endl;
     string substr_needle = needle.substr(pos_str, threshold);
     CreateHashTableNeedle(substr_needle, num_keys, hash_needle, pos_str);
   }
@@ -40,11 +39,11 @@ int main() {
                len_seq = size_t(threshold);
         pos_str += threshold - 1;
         pos_needle += threshold - 1;
-        for (;
-             (++pos_str < haystack_length) && (++pos_needle < needle_length) &&
-             (haystack[pos_str] == needle[pos_needle]);
-             len_seq++)
-          ;
+        while ((++pos_str < haystack_length) &&
+               (++pos_needle < needle_length) &&
+               (haystack[pos_str] == needle[pos_needle])) {
+          len_seq++;
+        }
         pos_str--;
         cout << "sequence of length = " << len_seq
              << " found at haystack offset " << start_haystack
@@ -64,7 +63,7 @@ void CheckInputData(size_t haystack_length, int needle_length, int threshold) {
 
 int FindSubstringInHashTable(
     string substr_haystack, int num_keys,
-    vector<tuple<bool, size_t, string, size_t>> hash_needle) {
+    vector<tuple<bool, size_t, string, size_t>>& hash_needle) {
   size_t hash_code = hash<string>{}(substr_haystack);
   int pos_hash_table = hash_code % num_keys;
   while (get<0>(hash_needle[pos_hash_table]) == true) {
@@ -78,7 +77,7 @@ int FindSubstringInHashTable(
 
 void CreateHashTableNeedle(
     string substr_needle, int num_keys,
-    vector<tuple<bool, size_t, string, size_t>> hash_needle, int pos_str) {
+    vector<tuple<bool, size_t, string, size_t>>& hash_needle, int pos_str) {
   size_t hash_code = hash<string>{}(substr_needle);
   int pos_hash_table = hash_code % num_keys;
   while (get<0>(hash_needle[pos_hash_table]) == true) {
@@ -91,7 +90,7 @@ void CreateHashTableNeedle(
       make_tuple(true, hash_code, substr_needle, pos_str);
 }
 
-void CreateStringFromFile(string *str_out, string filename) {
+void CreateStringFromFile(string* str_out, string filename) {
   stringstream buff_string;
   ifstream file(filename, ios_base ::in);
   if (file.is_open()) {
