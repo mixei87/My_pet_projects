@@ -1,13 +1,25 @@
 from sys import argv
+from argparse import ArgumentParser
 
-if len(argv) > 1:
-  string = argv[1]
-  len_str = len(string)
-  flag = True
-  for i in range(len_str):
-    if string[i] == ' ':
-      if flag == False:
-        flag = True
-    elif flag == True:
-      print(string[i], end='')
-      flag = False
+
+def CheckInput():
+  parser = ArgumentParser(description='Input message for decrypting')
+  parser.add_argument('msg', nargs='*', type=str,
+                      help='Message for decrypting')
+  return parser.parse_args()
+
+
+def CreateString(msg: list) -> list:
+  return [word for big_str in args.msg for word in big_str.split()]
+
+
+def PrintDecryptMsg(string: list):
+  for word in string:
+    if word[0].isalpha():
+      print(word[0], end='')
+
+
+if __name__ == "__main__":
+  args = CheckInput()
+  string = CreateString(args.msg)
+  PrintDecryptMsg(string)
