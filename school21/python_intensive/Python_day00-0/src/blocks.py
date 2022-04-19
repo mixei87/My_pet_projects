@@ -8,15 +8,16 @@ def CheckHash(hash_str: str) -> bool:
   return False
 
 
-def CheckInput(params: list):
-  if len(params) != 2:
-    print("Number of arguments isn't 1")
-    exit(1)
+def CheckInput():
+  parser = ArgumentParser(
+    description='Input number of validate hashs')
+  parser.add_argument('number_strings', metavar='n',
+                      type=int, help='Number of strings')
+  return parser.parse_args()
 
 
-def PrintStrings():
-  # check argument
-  n = int(argv[1])
+def PrintStrings(args):
+  n = args.number_strings
   for string in stdin:
     if (n <= 0):
       break
@@ -27,5 +28,5 @@ def PrintStrings():
 
 
 if __name__ == '__main__':
-  CheckInput(argv)
-  PrintStrings()
+  args = CheckInput()
+  PrintStrings(args)
