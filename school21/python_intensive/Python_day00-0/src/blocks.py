@@ -1,4 +1,4 @@
-from sys import argv, stdin
+from sys import stdin
 from argparse import ArgumentParser
 
 
