@@ -7,48 +7,34 @@ def CheckInput(argv):
     exit(1)
 
 
-# flag = True
-# i = 0
-# for string in stdin:
-#   string = string.rstrip()
-#   if flag == 'Error':
-#     break
-#   for j in range(len(string)):
-#     if j > 4:
-#       flag = 'Error'
-#       break
-#     if (j == 0 or j == i or j == 4-i or j == 4):
-#       if string[j] != '*':
-#         flag = False
-#     else:
-#       if string[j] == '*':
-#         flag = False3
-#   i += 1
-
-# if i != 3:
-#   flag = 'Error'
-# print(flag, end='')
-
-
 def MyExit():
   print("Error")
   exit(1)
 
 
-def CheckStrings():
+def CheckStrings() -> list:
   n = 0
-  for string in stdin:
-    n += 1
-    if n > 3:
-      MyExit()
-    string = string.rstrip()
-    if len(string) != 5:
-      MyExit()
-  else:
-    if n == 0:
-      MyExit()
+  strings = [lines.rstrip() for lines in stdin.readlines()]
+  if len(strings) != 3:
+    MyExit()
+  return strings
+
+
+def CheckToAsterisks(strings):
+  i = 0
+  for string in strings:
+    for j in range(len(string)):
+      if j == 5:
+        MyExit()
+      elif (j == 0 or j == i or j == 4-i or j == 4):
+        if string[j] != '*':
+          MyExit()
+      elif string[j] == '*':
+        MyExit()
+    i += 1
 
 
 if __name__ == '__main__':
   CheckInput(argv)
-  CheckStrings()
+  strings = CheckStrings()
+  CheckToAsterisks(strings)
