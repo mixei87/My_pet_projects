@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 
 def CheckHash(hash_str: str) -> bool:
-  if len(hash_str) == 32 and hash_str[:5] == "00000" and hash_str != "0":
+  if len(hash_str) == 32 and hash_str[:5] == "00000" and hash_str[5] != "0":
     return True
   return False
 
@@ -16,8 +16,7 @@ def CheckInput():
   return parser.parse_args()
 
 
-def PrintStrings(args):
-  n = args.number_strings
+def PrintStrings(n):
   for string in stdin:
     if (n <= 0):
       break
@@ -29,4 +28,4 @@ def PrintStrings(args):
 
 if __name__ == '__main__':
   args = CheckInput()
-  PrintStrings(args)
+  PrintStrings(args.number_strings)
