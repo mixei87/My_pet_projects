@@ -1,0 +1,16 @@
+Coding Test: data search
+Данный тест служит для того чтобы Вы раскрыли свои способности по дизайну и реализации алгоритма поиска данных. Всё должно быть выполнено на языке C++.
+Проблема
+У нас есть две последовательности данных, назовем их haystack и needle. Нам надо найти все вхождения любой последовательности данных (needle) у которой длина больше или равна threshold в haystack.
+Пример:
+haystack = “vnk2435kvabco8awkh125kjneytbcd12qjhb4acd123xmnbqwnw4t” 
+needle = “abcd1234” 
+threshold = 3 
+ожидаемый вывод будет:
+sequence of length = 3 found at haystack offset 9, needle offset 0 
+sequence of length = 5 found at haystack offset 27, needle offset 1 
+sequence of length = 5 found at haystack offset 38, needle offset 2 
+Уточнение 
+Алгоритм должен быть оптимизирован так, что haystack может быть бесконечно большим и needle может иметь размер от 1.000 до 1.000.000 байт. Учтите что в haystack и needle лежат произвольные байты, они не обязательно содержат печатаемые символы (не стандартные строки). 
+Описание и реализация нескольких решений между скоростью и требования к памяти будут плюсом.
+Наслаждайтесь!

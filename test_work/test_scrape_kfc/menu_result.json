@@ -1,0 +1,404 @@
+[
+    {
+        "name": "Şefburger Menyu🥤 ✨",
+        "description": "Şefburger, Orta fri kartofu, İçki 500 ml (seçimə görə), Ketçup",
+        "price": 6.0,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/1b7f09dc-e089-11eb-9541-72ede49cfcdc_kfc_shefburger_menu.jpeg"
+    },
+    {
+        "name": "Kombo Menyu №1 😍",
+        "description": "5 bud, 10 strips, 10 qanad, basket fri, 3 sous, 3 Coca-Cola® 500 ml",
+        "price": 34.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/4d9e2eca-c77f-11eb-8121-2ac9deae44db_kfc_2_1280x720.jpeg"
+    },
+    {
+        "name": "Kombo Menyu №2 🤩",
+        "description": "Basket 16 qanad, 2 kiçik fri, 2 sous, 2 Coca-Cola® 500 ml",
+        "price": 13.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/6e1a2258-c77f-11eb-9513-b6ccebf57d04_kfc.jpeg"
+    },
+    {
+        "name": "Cütlük Qutusu🥤 ✨",
+        "description": "2 İ-Tvister, 2 acılı qanad, 2 strips (orijinal/acılı), 1 basket fri, 2 sous (seçim üzrə) və 2 Coca-Cola 500 ml",
+        "price": 12.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/bcfc556a-b5e9-11ea-8040-42d741d686d3_kfc_wolt_design_0.jpeg"
+    },
+    {
+        "name": "Basket Kombo🥤 ✨",
+        "description": "2 i-tvister, Basket Duet (4 acılı/acısız strips, 4 acılı qanad, 2 bud, 2 kiçik kartof fri), 2 soyuq içki (Koka-Kola, Koka-Kola Zero, Fanta, Sprite)",
+        "price": 15.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e9995dfdab984b329f07830/d91c3bc8-51b8-11eb-ab88-ae3dfae8f2ae_untitled.jpeg"
+    },
+    {
+        "name": "Tvister Junior Menyu",
+        "description": "Tvister junior, kiçik fri kartofu, sous, Coca-Cola® 500 ml.",
+        "price": 5.4,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/39b47612-6f9b-11eb-98b3-1a7e42e36e14_kfc_junior_512x512_.jpeg"
+    },
+    {
+        "name": "Tvister Menyu 🌯🥤",
+        "description": "Tvister, orta kartof fri, 1 soyuq içki (Coca-Cola®, Coca-Cola Zero®, Fanta®, Sprite®)",
+        "price": 6.3,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/af1ccc4a-8591-11eb-b53f-fe5aef34af21_untitled.jpeg"
+    },
+    {
+        "name": "Basket Menyu 😋",
+        "description": "Basket 9 bud (orijinal/ acılı), 2 kiçik fri kartofu, 2 Coca-Cola® 500 ml",
+        "price": 17.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/60c35185171db961ded9aefa/50a5b5b2-d1ab-11eb-9f8a-9ed1a22bf983_2.jpeg"
+    },
+    {
+        "name": "Paket",
+        "description": "",
+        "price": 0.1,
+        "image": "None"
+    },
+    {
+        "name": "Bud (1 əd.)",
+        "description": "Polkovnik Sandersin hazırladığı “11 ot və ədviyyat” sirli resepti ilə hazırlanmış orijinal dadlı toyuq budları.",
+        "price": 2.5,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/b798dc78-7ff3-11ea-bcfa-0a586467d907_1000x568_legs.jpeg"
+    },
+    {
+        "name": "Bud (2 əd.)",
+        "description": "Polkovnik Sandersin hazırladığı “11 ot və ədviyyat” sirli resepti ilə hazırlanmış orijinal dadlı toyuq budları.",
+        "price": 4.5,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/b798dc78-7ff3-11ea-bcfa-0a586467d907_1000x568_legs.jpeg"
+    },
+    {
+        "name": "Bud (3 əd.)",
+        "description": "Polkovnik Sandersin hazırladığı “11 ot və ədviyyat” sirli resepti ilə hazırlanmış orijinal dadlı toyuq budları.",
+        "price": 6.5,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/b798dc78-7ff3-11ea-bcfa-0a586467d907_1000x568_legs.jpeg"
+    },
+    {
+        "name": "Strips (3 əd.)",
+        "description": "Yalnız sizin istədiyiniz dad və daha heçnə. Həddindən artıq yumşaq toyuq filesi yoğurulmuş və polkovnik Sandersin unikal reseptinə əsasən restoranda hazırlanmış. Mükəmməl dad!",
+        "price": 3.4,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/71fe1060-7ff4-11ea-9ff9-0a5864677321_1000x568_strips.jpeg"
+    },
+    {
+        "name": "Strips (6 əd.)",
+        "description": "Yalnız sizin istədiyiniz dad və daha heçnə. Həddindən artıq yumşaq toyuq filesi yoğurulmuş və polkovnik Sandersin unikal reseptinə əsasən restoranda hazırlanmış. Mükəmməl dad!",
+        "price": 6.4,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/71fe1060-7ff4-11ea-9ff9-0a5864677321_1000x568_strips.jpeg"
+    },
+    {
+        "name": "Strips (9 əd.)",
+        "description": "Yalnız sizin istədiyiniz dad və daha heçnə. Həddindən artıq yumşaq toyuq filesi yoğurulmuş və polkovnik Sandersin unikal reseptinə əsasən restoranda hazırlanmış. Mükəmməl dad!",
+        "price": 9.0,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/71fe1060-7ff4-11ea-9ff9-0a5864677321_1000x568_strips.jpeg"
+    },
+    {
+        "name": "Qanad (3 əd.)",
+        "description": "İçi alov! Mələk qanadlardan uzaq. Bizim ədviyyaltarla hazırlanmış acılı toyuq qanadları  - əsl alovdur!",
+        "price": 3.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/38c1d786-7ff5-11ea-9db6-0a586467da06_1000x568_wings.jpeg"
+    },
+    {
+        "name": "Qanad (6 əd.)",
+        "description": "İçi alov! Mələk qanadlardan uzaq. Bizim ədviyyaltarla hazırlanmış acılı toyuq qanadları  - əsl alovdur!",
+        "price": 5.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/38c1d786-7ff5-11ea-9db6-0a586467da06_1000x568_wings.jpeg"
+    },
+    {
+        "name": "Qanad (9 əd.)",
+        "description": "İçi alov! Mələk qanadlardan uzaq. Bizim ədviyyaltarla hazırlanmış acılı toyuq qanadları  - əsl alovdur!",
+        "price": 7.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/38c1d786-7ff5-11ea-9db6-0a586467da06_1000x568_wings.jpeg"
+    },
+    {
+        "name": "Çizburger",
+        "description": "Küncütlü kökənin üzərində xardallı sous, ketçup, unlanmış stripslər, soğan, pendir, xiyar",
+        "price": 3.0,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/c3982d0a-7ff6-11ea-a0b8-0a586467b018_1000x568_cheeseburger.jpeg"
+    },
+    {
+        "name": "Şefburger",
+        "description": "Ağ küncütlü kökədə yeni Şefburger – xüsusi KFC unlanmasında hazırlanan zərif toyuq, incə kahı yarpaqları, duzlu xiyar və möhtəşəm sous deməkdir.",
+        "price": 4.0,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/0f0b30fc-7ff7-11ea-a0d7-0a58647f85ac_1000x568_shefburger.jpeg"
+    },
+    {
+        "name": "Şefburger De Lüks",
+        "description": "Şefdən burger artıq de Lyüks versiyasında! Qara küncüt ilə bulkada xırçıldayan unlamada toyuq filesi, aysberq salatı, sezar sousu, pomidor və pendir dilimi",
+        "price": 4.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/24bfab52-912c-11eb-bc9b-720c2e41089b_untitled.jpeg"
+    },
+    {
+        "name": "Şefburger De Lüks Acılı",
+        "description": "Şefdən acılı burger artıq de Lyüks versiyasında! Qara küncüt ilə bulkada xırçıldayan unlamada acılı toyuq filesi, aysberq salatı, burger sousu, xiyar turşusu və pendir dilimi",
+        "price": 4.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/24bfab52-912c-11eb-bc9b-720c2e41089b_untitled.jpeg"
+    },
+    {
+        "name": "Çizburger De Lüks",
+        "description": "Buğda kökəsi arasında dviyyatlı xardallı sous, ketçup, orijinal unlanmada yumşaq toyuq filesi, soğan, Çedder pendiri, xıyar, təzə kahı və pomidor dililəri.",
+        "price": 3.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/b3286776-7ff8-11ea-963c-0a586466b64c_1000x568_cheeseburger_deluks.jpeg"
+    },
+    {
+        "name": "Şefburger Junior",
+        "description": "Ağ-qara küncütlü bulkada zərif qaymaqlı sous, original unlanmada 2 toyuq stripsi, aysberq salatı və pomidor.",
+        "price": 3.3,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/e9066660-96a2-11eb-91a2-da5dcb89a873_untitled.jpeg"
+    },
+    {
+        "name": "Şefburger Junior Acılı",
+        "description": "Ağ-qara küncütlü bulkada burger sousu, acılı unlanmada 2 toyuq stripsi, aysberq salatı, soğan, duzlu xiyar.",
+        "price": 3.3,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/e9066660-96a2-11eb-91a2-da5dcb89a873_untitled.jpeg"
+    },
+    {
+        "name": "Tvister",
+        "description": "Dada bürünmüş! Biz acılı xırtıltılı və ya zərif dərili toyuq filesindən hazırlanmış naqetləri ətirli kahı, pomidor dilimləri və incə sousda hamar buğda çörəyinə bürüyürük! Bununla da tvister bürümə alınır!",
+        "price": 3.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/caf2a45a-7ff5-11ea-9cc4-0a586467d907_1000x568_twister.jpeg"
+    },
+    {
+        "name": "Longer Acılı",
+        "description": "Acılı xırtıltılı toyuq filesi təravətli kahı və ketçupla uzun küncüt rollda.",
+        "price": 1.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/2bfd225c-7ff6-11ea-9e21-0a58647e8a96_1000x568_kfc_longer_bbq.jpeg"
+    },
+    {
+        "name": "Longer Mayonez ilə",
+        "description": "Orijinal xırtıltılı toyuq filesi təravətli kahı və ketçupla uzun küncüt rollda.",
+        "price": 1.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/4154f6de-7ff6-11ea-a7b8-0a586467bc1a_1000x568_kfc_longer_mayonez.jpeg"
+    },
+    {
+        "name": "Boksmaster",
+        "description": "Tam yenidən yükləmə! Bizim Boksmasterdə böyük enerji yükü!  Zərif toyuq filesi, kartof oladyası, pendir dilimi, pomidor tikəsi, kahı və incə sous hamar buğda çörəyində - dinamik və dadlı!",
+        "price": 5.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/659d7cdc-7ff6-11ea-a7b8-0a586467bc1a_1000x568_boksmaster.jpeg"
+    },
+    {
+        "name": "i-Tvister",
+        "description": "Biz zərif toyuq file tikələrini təravətli kahı, pomidor dilimləri və incə sousda hamar buğda fəsəlisinə bürüdük.",
+        "price": 1.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/a3180776-7ff6-11ea-821c-0a5864677321_1000x568_itwister.jpeg"
+    },
+    {
+        "name": "Tvister De Lüks",
+        "description": "Sevimli Tvister indi De Lüks: Buğda fəsəlisi, ketçup, duzlu xıyar və təzə kahı, soğan, pendir xardal və xüsusi unlnmada bişirilmiş nəfis toyuq stripsləri.",
+        "price": 4.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/ce7a8a0e-7ff8-11ea-af30-0a586467c118_1000x568_twister_delux.jpeg"
+    },
+    {
+        "name": "Tvister Junior",
+        "description": "Pendirli fəsəli, orijinal unlanmada hazırlanmış  2 xırçıldayan stripsç xardal, ketçup, pendir, duzlu xiyar və soğan – ideal atışdırmalıq!",
+        "price": 2.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/18e5a6aa-7ff9-11ea-8592-0a58647f8aa6_1000x568_tvister_junior.jpeg"
+    },
+    {
+        "name": "Yubiley Dəmir Basket",
+        "description": "6 strips, 6 qanad, 4 bud, 3 sous",
+        "price": 24.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/6129a7fe-e088-11eb-9533-9a9119af38a3_pyqbgrrlfox5barohmrya.jpeg"
+    },
+    {
+        "name": "Basket (9 Bud)",
+        "description": "Geniş miqyaslı mövqe! Basketdə dünyanın məşhur KFC ləzzəti ortaya çıxır. Biz sizin üçün böyük bir şirkəti birləşdirdik - əla növ toyuq budları ədviyyatlı və kartof fri! Görünüşü qədər dadı da əladır!",
+        "price": 16.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/126ae878-8083-11ea-89ff-0a5864675511_1000x568_basket_nojki.jpeg"
+    },
+    {
+        "name": "Basket (15 Bud)",
+        "description": "Geniş miqyaslı mövqe! Basketdə dünyanın məşhur KFC ləzzəti ortaya çıxır. Biz sizin üçün böyük bir şirkəti birləşdirdik - əla növ toyuq budları ədviyyatlı və kartof fri! Görünüşü qədər dadı da əladır!",
+        "price": 26.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/126ae878-8083-11ea-89ff-0a5864675511_1000x568_basket_nojki.jpeg"
+    },
+    {
+        "name": "Basket (16 qanad, 2 fri kartofu)",
+        "description": "Geniş miqyaslı mövqe! Basketdə dünyanın məşhur KFC ləzzəti ortaya çıxır. Biz sizin üçün böyük bir şirkəti birləşdirdik-ədviyyatlı acı qanadlar. Görünüşü qədər dadı da əladır!",
+        "price": 12.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/3b5123fa-8084-11ea-ab36-0a5864676f10_1000x568_basket_16wings.jpeg"
+    },
+    {
+        "name": "Basket (25 Qanad)",
+        "description": "Geniş miqyaslı mövqe! Basketdə dünyanın məşhur KFC ləzzəti ortaya çıxır. Biz sizin üçün böyük bir şirkəti birləşdirdik-ədviyyatlı acı qanadlar. Görünüşü qədər dadı da əladır!",
+        "price": 19.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/54c370f0-8083-11ea-a69f-0a58647f8d24_1000_568_kfc_basket.jpeg"
+    },
+    {
+        "name": "Basket Duet (2 bud, 4 qanad, 4 strips, 2 fri kartofu)",
+        "description": "Geniş miqyaslı mövqe! Basketdə dünyanın məşhur KFC ləzzəti ortaya çıxır. Biz sizin üçün böyük bir şirkəti birləşdirdik- əla toyuq tikələri, ədviyyatlı, acı qanadlar, yumşaq strips və kartof qızartması! Görünüşü qədər dadı da əladır!",
+        "price": 12.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/de18554e-80ee-11ea-acdb-0a5864682804_1000x568_bucket_duet.jpeg"
+    },
+    {
+        "name": "Basket Duet (6 bud, 2 fri kartofu)",
+        "description": "Geniş miqyaslı mövqe! Basketdə dünyanın məşhur KFC ləzzəti ortaya çıxır. Biz sizin üçün böyük bir şirkəti birləşdirdik- əla növ toyuq budları ədviyyatlı və kartof fri! Görünüşü qədər dadı da əladır!",
+        "price": 12.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/ea2e4118-80ee-11ea-950b-0a5864682408_1000x568_bucket_duet.jpeg"
+    },
+    {
+        "name": "Sanders Basket",
+        "description": "Polkovnik Sandersdən Basket! 2 bud, 2 qanad, 2 strips.",
+        "price": 7.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/fd363d4c-80ee-11ea-a822-0a5864682408_1000x568_sanders_basket.jpeg"
+    },
+    {
+        "name": "Smart Basket",
+        "description": "Basketdə dünyanın məşhur KFC ləzzəti ortaya çıxır. Seçimə görə acılı qanadlar/toyuq budu.",
+        "price": 4.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/b79d5bae-8084-11ea-b7bf-0a58647f83cf_1000x568_smartbasket.jpeg"
+    },
+    {
+        "name": "999 Basket (9 acılı qanad, 9 strips, 9 bud, 3 kiçik fri kartofu)",
+        "description": "Geniş miqyaslı mövqe! Basketdə dünyanın məşhur KFC ləzzəti ortaya çıxır. Biz sizin üçün böyük bir şirkəti birləşdirdik- əla növ toyuq budları, acılı qanadlar, stripslər, ədviyyatlı və kartof fri! Görünüşü qədər dadı da əladır!",
+        "price": 28.8,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e9995dfdab984b329f07830/291b7778-1448-11eb-995a-3a049a5ea6f5_999_basket.jpeg"
+    },
+    {
+        "name": "Basket Fri",
+        "description": "",
+        "price": 3.3,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/3fa0d43e-807d-11ea-b983-0a586467c118_1000x568_basket_fri.jpeg"
+    },
+    {
+        "name": "Orta Fri Kartofu",
+        "description": "",
+        "price": 2.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/60f5d2a6-807d-11ea-afee-0a586465364d_1000x568_sredniy_fri.jpeg"
+    },
+    {
+        "name": "Kiçik Fri Kartofu",
+        "description": "",
+        "price": 1.6,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/7170677c-807d-11ea-819e-0a586467165b_1000x568_small_fries.jpeg"
+    },
+    {
+        "name": "Kəndsayağı Kartof",
+        "description": "",
+        "price": 2.0,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/8d02d876-807d-11ea-ba6a-0a5864649a7e_1000x568_kend_kartofu.jpeg"
+    },
+    {
+        "name": "Kiçik Kəndsayağı Kartof",
+        "description": "",
+        "price": 1.7,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/8d02d876-807d-11ea-ba6a-0a5864649a7e_1000x568_kend_kartofu.jpeg"
+    },
+    {
+        "name": "Ketçup",
+        "description": "",
+        "price": 0.5,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/94891e36-8085-11ea-8366-0a586464885b_1000x568_sauce_ketchup.jpeg"
+    },
+    {
+        "name": "BBQ Sousu",
+        "description": "",
+        "price": 0.5,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/cd53047a-8085-11ea-ba5f-0a58647f8d24_1000x568_sauce_bbq.jpeg"
+    },
+    {
+        "name": "Sarımsaqlı Sous",
+        "description": "",
+        "price": 0.5,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/dd55f602-8085-11ea-b3c0-0a586467b81a_1000x568_sauce_garlic.jpeg"
+    },
+    {
+        "name": "Pendirli Sous",
+        "description": "",
+        "price": 0.5,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/ec903862-8085-11ea-abfe-0a58647e8efc_1000x568_sauce_cheese.jpeg"
+    },
+    {
+        "name": "Turşa-Şirin Sous",
+        "description": "",
+        "price": 0.5,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/02333840-8086-11ea-823e-0a5864677518_1000x568_sauce_sweet_chilli.jpeg"
+    },
+    {
+        "name": "Karamelli Donat",
+        "description": "",
+        "price": 1.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/adbac504-b94a-11eb-bd6d-5237679add27_untitled.jpeg"
+    },
+    {
+        "name": "Çiyələkli Donat",
+        "description": "Yumşaq çiyələk cemli donat.",
+        "price": 1.9,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/1807d928-80ef-11ea-98a5-0a58647f81e7_donut_straw_01_out.jpeg"
+    },
+    {
+        "name": "Çiyələkli Piroq",
+        "description": "",
+        "price": 1.7,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e9995dfdab984b329f07830/6bba28de-4f41-11eb-83d1-fae96e1fb91e______________________youtube____________13_.jpeg"
+    },
+    {
+        "name": "Albalılı Piroq",
+        "description": "",
+        "price": 1.7,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/bc2bab1c-b94a-11eb-8848-3a2459e9288e_untitled__1_.jpeg"
+    },
+    {
+        "name": "Almalı Tart",
+        "description": "",
+        "price": 3.7,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5ebd3e14bb814f8bc353015f/b60d1578-6f98-11eb-8d41-2a6f995fd2db_kfc_tart_512x512.jpeg"
+    },
+    {
+        "name": "Coca-Cola®, 500 ml",
+        "description": "",
+        "price": 1.7,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/51bdfec2-80ef-11ea-a5d8-0a586460840c_1000x568_cocacola05l.jpeg"
+    },
+    {
+        "name": "Fanta®, 500 ml",
+        "description": "",
+        "price": 1.7,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/62fe58e4-80ef-11ea-9906-0a5864676d22_1000x568_fanta.jpeg"
+    },
+    {
+        "name": "Sprite®, 500 ml",
+        "description": "",
+        "price": 1.7,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/6f55aade-80ef-11ea-8842-0a5864682409_1000x568_sprite.jpeg"
+    },
+    {
+        "name": "Fuse Tea® Manqo - Ananas, 500 ml",
+        "description": "",
+        "price": 2.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/9514f55e-80ef-11ea-951d-0a58647f81e7_1000x568_fuse_tea_mango_ananas.jpeg"
+    },
+    {
+        "name": "Fuse Tea® Limon, 500 ml",
+        "description": "",
+        "price": 2.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/82a7cf90-80ef-11ea-9d2d-0a586467b81b_1000x568_fuse_tea_limon.jpeg"
+    },
+    {
+        "name": "Fuse Tea® Şaftalı, 500 ml",
+        "description": "",
+        "price": 2.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/0c2afcae-8183-11ea-b711-0a5864676d32_fuse_tea_peach.jpeg"
+    },
+    {
+        "name": "Capri-Sun® Portağal",
+        "description": "",
+        "price": 1.4,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/b6d74c8c-80ef-11ea-85b4-0a5864676d22_1000x568_capri_sun_orange.jpeg"
+    },
+    {
+        "name": "Capri-Sun® Multivitamin",
+        "description": "",
+        "price": 1.4,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/f7dbdd4c-80ef-11ea-81e1-0a58647f88f1_1000x568_capri_sun_multi.jpeg"
+    },
+    {
+        "name": "Cappy Mini® Meyvə Şirəsi",
+        "description": "",
+        "price": 1.2,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/a0fd9c44-8168-11ea-a143-0a58647f81ec_cappy_mini.jpeg"
+    },
+    {
+        "name": "Bonaqua® Mineral Su, 500 ml",
+        "description": "",
+        "price": 1.0,
+        "image": "https://wolt-menu-images-cdn.wolt.com/menu-images/5e987013b2a1a7f28eec2808/e24df938-8167-11ea-8685-0a58647e8a9f_bonaqua_500_ml__2_.jpeg"
+    }
+]
