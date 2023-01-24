@@ -1,8 +1,13 @@
 #ifndef GAMEBOARD_H
 #define GAMEBOARD_H
+
 #include <QAbstractItemModel>
 #include <QColor>
 #include <algorithm>
+//#include <chrono>
+#include <QCoreApplication>
+#include <QThread>
+#include <QTimer>
 #include <random>
 #include <unordered_map>
 #include <unordered_set>
@@ -19,8 +24,17 @@ class GameBoard : public QAbstractItemModel {
 
   int height_field() const;
   int width_field() const;
+  Q_INVOKABLE bool swapPoints(int index);
+  Q_INVOKABLE bool addRandomPoints();
+
+  Q_INVOKABLE bool setCurrentIndex(int newCurrentIndex);
+
+ signals:
+  void currentIndexChanged();
 
  private:
+  bool move(int index);
+  void delay(int millisecondsToWait);
   static const int default_height_field{9};
   static const int default_width_field{9};
   const QColor default_color{Qt::black};
@@ -29,6 +43,7 @@ class GameBoard : public QAbstractItemModel {
   const int m_width_field;
   const int m_boardSize;
   std::vector<QColor> m_field;
+  int m_currentIndex;
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
   QVariant data(const QModelIndex& index,
                 int role = Qt::DisplayRole) const override;
@@ -66,10 +81,6 @@ class GameBoard : public QAbstractItemModel {
 
   void getRandomPoints(const unordered_set<int>& field, vector<int>& seq_points,
                        const int& count_points);
-
-  void swapPoints();
-
-  void addRandomPoints();
 };
 
 #endif  // GAMEBOARD_H

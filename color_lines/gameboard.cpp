@@ -6,11 +6,34 @@ GameBoard::GameBoard(const int height_field, const int width_field,
       m_height_field{height_field},
       m_width_field{width_field},
       m_boardSize{m_height_field * m_width_field},
-      m_field(m_boardSize, default_color) {
+      m_field(m_boardSize, default_color),
+      m_currentIndex{-1} {
   for (int i = 0; i < m_height_field * m_width_field; ++i) {
     m_field_free.insert(i);
   }
   addRandomPoints();
+  //  while (m_field_free.size()) {
+  //    addRandomPoints();
+
+  //    if (checkLines()) {
+  //      clearBingoRows();
+  //    }
+  //    if (m_field_free.size()) {
+  //      swapPoints();
+
+  //      if (checkLines()) {
+  //        clearBingoRows();
+  //      }
+  //    }
+  //  }
+}
+
+void GameBoard::delay(int millisecondsWait) {
+  QEventLoop loop;
+  QTimer t;
+  t.connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
+  t.start(millisecondsWait);
+  loop.exec();
 }
 
 int GameBoard::rowCount(const QModelIndex& parent) const {
@@ -101,19 +124,41 @@ void GameBoard::getRandomPoints(const unordered_set<int>& field,
          gen);
 }
 
-void GameBoard::swapPoints() {
-  getRandomPoints(m_field_busy, m_seq_busy_points, 1);
-  int busy = m_seq_busy_points[0];
-  getRandomPoints(m_field_free, m_seq_free_points, 1);
-  int free = m_seq_free_points[0];
-  swap(m_field[busy], m_field[free]);
-  m_field_busy.erase(busy);
-  m_field_busy.insert(free);
-  m_field_free.erase(free);
-  m_field_free.insert(busy);
+// int GameBoard::currentIndex() const
+//{
+//     return m_currentIndex;
+// }
+
+bool GameBoard::setCurrentIndex(int newCurrentIndex) {
+  m_currentIndex = newCurrentIndex;
+  return true;
 }
 
-void GameBoard::addRandomPoints() {
+bool GameBoard::swapPoints(int index) {
+  //  getRandomPoints(m_field_busy, m_seq_busy_points, 1);
+  //  int busy = m_seq_busy_points[0];
+  //  getRandomPoints(m_field_free, m_seq_free_points, 1);
+  //  int free = m_seq_free_points[0];
+  if (m_currentIndex == -1) return false;
+  swap(m_field[m_currentIndex], m_field[index]);
+  m_field_busy.erase(m_currentIndex);
+  m_field_busy.insert(index);
+  m_field_free.erase(index);
+  m_field_free.insert(m_currentIndex);
+  m_currentIndex = -1;
+  if (checkLines()) {
+    clearBingoRows();
+  }
+  addRandomPoints();
+  if (checkLines()) {
+    clearBingoRows();
+  }
+  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
+                   QAbstractItemModel::createIndex(m_boardSize, 0));
+  return true;
+}
+
+bool GameBoard::addRandomPoints() {
   getRandomPoints(m_field_free, m_seq_free_points, m_count_next_balls);
   for (const auto& n : m_seq_free_points) {
     auto gen = mt19937{random_device{}()};
@@ -122,4 +167,10 @@ void GameBoard::addRandomPoints() {
     m_field_free.erase(n);
     m_field_busy.insert(n);
   }
+  if (checkLines()) {
+    clearBingoRows();
+  }
+  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
+                   QAbstractItemModel::createIndex(m_boardSize, 0));
+  return true;
 }
