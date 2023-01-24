@@ -4,7 +4,7 @@ import QtQuick.Window 2.15
 Window {
     id: root
     width: 640
-    height: 480
+    height: 640
     visible: true
     title: qsTr("Color Lines")
 
@@ -13,6 +13,8 @@ Window {
         y = Screen.height / 2 - root.height / 2
     }
     GameBoard {
-        anchors.fill: parent
+        anchors.centerIn: parent
+        width: Math.min(root.width, root.height)
+        height: width
     }
 }

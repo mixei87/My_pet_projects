@@ -1,8 +1,10 @@
 import QtQuick 2.0
 
 Rectangle {
-     id: tile
-    color: "lightgrey"
-    radius: 10
-    //    color: "beige"
+    id: root
+
+    radius: root.height * 0.1
+    Text {
+        id: _tileText
+    }
 }
