@@ -40,11 +40,9 @@ class gameField {
   void mainFunc() {
     srand(time(NULL));
     printField();
-    // this_thread::sleep_for(chrono::milliseconds(500));
     while (field_free_.size()) {
       addRandomPoints();
       printField();
-      // this_thread::sleep_for(chrono::milliseconds(500));
       if (checkLines()) {
         printBingo();
         clearBingoRows();
@@ -54,7 +52,6 @@ class gameField {
       if (field_free_.size()) {
         swapPoints();
         printField();
-        // this_thread::sleep_for(chrono::milliseconds(1500));
         if (checkLines()) {
           printBingo();
           clearBingoRows();
@@ -131,6 +128,7 @@ class gameField {
       }
       cout << "\n-------------------------------------\n";
     }
+    this_thread::sleep_for(chrono::milliseconds(500));
   }
 
   void printBingo() {
@@ -146,7 +144,7 @@ class gameField {
       }
       cout << "\n-------------------------------------\n";
     }
-    this_thread::sleep_for(chrono::milliseconds(200));
+    this_thread::sleep_for(chrono::milliseconds(1500));
   }
 
   void swapPoints() {
