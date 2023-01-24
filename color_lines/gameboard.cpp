@@ -124,21 +124,12 @@ void GameBoard::getRandomPoints(const unordered_set<int>& field,
          gen);
 }
 
-// int GameBoard::currentIndex() const
-//{
-//     return m_currentIndex;
-// }
-
 bool GameBoard::setCurrentIndex(int newCurrentIndex) {
   m_currentIndex = newCurrentIndex;
   return true;
 }
 
 bool GameBoard::swapPoints(int index) {
-  //  getRandomPoints(m_field_busy, m_seq_busy_points, 1);
-  //  int busy = m_seq_busy_points[0];
-  //  getRandomPoints(m_field_free, m_seq_free_points, 1);
-  //  int free = m_seq_free_points[0];
   if (m_currentIndex == -1) return false;
   swap(m_field[m_currentIndex], m_field[index]);
   m_field_busy.erase(m_currentIndex);
