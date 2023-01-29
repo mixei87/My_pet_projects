@@ -7,9 +7,8 @@ Window {
     height: 640
     visible: true
     title: qsTr("Color Lines")
-
     Component.onCompleted: {
-        x = Screen.width / 2 - root.width / 2
+        x = Screen.width * 2 / 3 - root.width / 3
         y = Screen.height / 2 - root.height / 2
     }
     GameBoard {

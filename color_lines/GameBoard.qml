@@ -35,10 +35,43 @@ GridView {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
+                        _animationReduce.running = true
                         root.model.setCurrentIndex(index)
                     }
+                }
+                NumberAnimation {
+                    id: _animationReduce
+                    target: ball
+                    properties: "scale"
+                    to: 0.8
+                    duration: 500
+                    _animationIncrease.running: true
+                }
+                NumberAnimation {
+                    id: _animationIncrease
+                    target: ball
+                    properties: "scale"
+                    to: 1.0
+                    duration: 500
+                    _animationReduce.running: true
                 }
             }
         }
     }
-}
+} //ParallelAnimation {//    id: _animationAppear
+//    //                    NumberAnimation {
+//    //                        target: ball
+//    //                        property: "opacity"
+//    //                        from: 0.0
+//    //                        to: 1.0
+//    //                        duration: 500
+//    //                    }
+//    NumberAnimation {
+//        target: ball
+//        properties: "scale"
+//        //                        from: 0.0
+//        to: 0.8
+//        duration: 500
+//    }
+//}
+
