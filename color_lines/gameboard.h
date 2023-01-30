@@ -26,8 +26,8 @@ class GameBoard : public QAbstractItemModel {
   int width_field() const;
   Q_INVOKABLE bool swapPoints(int index);
   Q_INVOKABLE bool addRandomPoints();
-
   Q_INVOKABLE bool setCurrentIndex(int newCurrentIndex);
+  Q_INVOKABLE int getCurrentIndex();
 
  signals:
   void currentIndexChanged();

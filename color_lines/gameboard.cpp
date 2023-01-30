@@ -129,6 +129,8 @@ bool GameBoard::setCurrentIndex(int newCurrentIndex) {
   return true;
 }
 
+int GameBoard::getCurrentIndex() { return m_currentIndex; }
+
 bool GameBoard::swapPoints(int index) {
   if (m_currentIndex == -1) return false;
   swap(m_field[m_currentIndex], m_field[index]);

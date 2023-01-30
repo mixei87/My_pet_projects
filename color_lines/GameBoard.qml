@@ -21,7 +21,29 @@ GridView {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    root.model.swapPoints(index)
+                    if (root.model.getCurrentIndex() === -1) {
+                        _pulseAnimation.running = true
+                        console.log("1) index: ", index)
+                        root.model.setCurrentIndex(index)
+                    } else if (root.model.getCurrentIndex() === index) {
+                        console.log("2) index: ", index)
+                        console.log("   root.model.getCurrentIndex(): ",
+                                    root.model.getCurrentIndex())
+                        _pulseAnimation.running = false
+                        ball.scale = 1
+                        root.model.setCurrentIndex(-1)
+                    } else {
+                        console.log("3) index: ", index)
+                        console.log("   root.model.getCurrentIndex(): ",
+                                    root.model.getCurrentIndex())
+                        var asd = root.model.getCurrentIndex()
+                        _pulseAnimation(asd).running = false
+                        root.model.setCurrentIndex(index)
+                        asd = root.model.getCurrentIndex()
+                        _pulseAnimation(asd).running = true
+                    }
+
+                    //                    root.model.swapPoints(index)
                 }
             }
             Ball {
@@ -32,46 +54,32 @@ GridView {
                 anchors.centerIn: tile
                 colorBall: model.display
                 visible: !Qt.colorEqual(model.display, "#000000")
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        _animationReduce.running = true
-                        root.model.setCurrentIndex(index)
+                //                MouseArea {
+                //                    anchors.fill: parent
+                //                    onClicked: {
+
+                //                    }
+                //                }
+                SequentialAnimation {
+                    id: _pulseAnimation
+                    //                    running: true
+                    loops: Animation.Infinite
+                    NumberAnimation {
+                        id: _animationReduce
+                        target: ball
+                        properties: "scale"
+                        to: 0.8
+                        duration: 500
                     }
-                }
-                NumberAnimation {
-                    id: _animationReduce
-                    target: ball
-                    properties: "scale"
-                    to: 0.8
-                    duration: 500
-                    _animationIncrease.running: true
-                }
-                NumberAnimation {
-                    id: _animationIncrease
-                    target: ball
-                    properties: "scale"
-                    to: 1.0
-                    duration: 500
-                    _animationReduce.running: true
+                    NumberAnimation {
+                        id: _animationIncrease
+                        target: ball
+                        properties: "scale"
+                        to: 1.0
+                        duration: 500
+                    }
                 }
             }
         }
     }
-} //ParallelAnimation {//    id: _animationAppear
-//    //                    NumberAnimation {
-//    //                        target: ball
-//    //                        property: "opacity"
-//    //                        from: 0.0
-//    //                        to: 1.0
-//    //                        duration: 500
-//    //                    }
-//    NumberAnimation {
-//        target: ball
-//        properties: "scale"
-//        //                        from: 0.0
-//        to: 0.8
-//        duration: 500
-//    }
-//}
-
+} //ParallelAnimation {//    id: _animationAppear//    //                    NumberAnimation {//    //                        target: ball//    //                        property: "opacity"//    //                        from: 0.0//    //                        to: 1.0//    //                        duration: 500//    //                    }//    NumberAnimation {//        target: ball//        properties: "scale"//        //                        from: 0.0//        to: 0.8//        duration: 500//    }//}
