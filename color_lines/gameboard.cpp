@@ -28,25 +28,22 @@ GameBoard::GameBoard(const int height_field, const int width_field,
   //  }
 }
 
-void GameBoard::delay(int millisecondsWait) {
-  QEventLoop loop;
-  QTimer t;
-  t.connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
-  t.start(millisecondsWait);
-  loop.exec();
-}
-
 int GameBoard::rowCount(const QModelIndex& parent) const {
   Q_UNUSED(parent);
   return m_field.size();
 }
 
 QVariant GameBoard::data(const QModelIndex& index, int role) const {
-  if (!index.isValid() || role != Qt::DisplayRole) {
+  qDebug() << "role: " << role << " Qt::DisplayRole: " << (int)Qt::DisplayRole;
+  if (!index.isValid()) {
     return {};
   }
-  const auto rowIndex{index.row()};
-  return QVariant::fromValue(m_field[rowIndex]);
+  if (role == Qt::DisplayRole) {
+    const auto rowIndex{index.row()};
+    return QVariant::fromValue(m_field[rowIndex]);
+  } else if (role == selectedBall_) {
+    return QVariant::fromValue(true);
+  }
 }
 
 QModelIndex GameBoard::index(int row, int column,
@@ -126,6 +123,8 @@ void GameBoard::getRandomPoints(const unordered_set<int>& field,
 
 bool GameBoard::setCurrentIndex(int newCurrentIndex) {
   m_currentIndex = newCurrentIndex;
+  //  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
+  //                   QAbstractItemModel::createIndex(m_boardSize, 0));
   return true;
 }
 

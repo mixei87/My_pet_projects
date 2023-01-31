@@ -18,6 +18,8 @@ using namespace std;
 class GameBoard : public QAbstractItemModel {
   Q_OBJECT
  public:
+  enum ModelRoles { selectedBall_ = Qt::UserRole + 1 };
+
   GameBoard(const int height_field = default_height_field,
             const int width_field = default_width_field,
             QObject* parent = nullptr);
@@ -34,7 +36,6 @@ class GameBoard : public QAbstractItemModel {
 
  private:
   bool move(int index);
-  void delay(int millisecondsToWait);
   static const int default_height_field{9};
   static const int default_width_field{9};
   const QColor default_color{Qt::black};
