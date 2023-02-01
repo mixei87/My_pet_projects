@@ -26,13 +26,11 @@ class GameBoard : public QAbstractItemModel {
 
   int height_field() const;
   int width_field() const;
-  Q_INVOKABLE bool swapPoints(int index);
-  Q_INVOKABLE bool addRandomPoints();
-  Q_INVOKABLE bool setCurrentIndex(int newCurrentIndex);
+  Q_INVOKABLE bool moveBall(int index);
+  Q_INVOKABLE void addRandomPoints();
+  Q_INVOKABLE bool setCurrentIndex(int newIndex);
   Q_INVOKABLE int getCurrentIndex();
-
- signals:
-  void currentIndexChanged();
+  Q_INVOKABLE bool checkLines();
 
  private:
   bool move(int index);
@@ -70,6 +68,7 @@ class GameBoard : public QAbstractItemModel {
 
   Q_PROPERTY(int height_field READ height_field CONSTANT)
   Q_PROPERTY(int width_field READ width_field CONSTANT)
+  //  Q_PROPERTY(int)
 
   void clearBingoRows();
 
@@ -78,10 +77,12 @@ class GameBoard : public QAbstractItemModel {
   void checkLine(int i, int j, const int& d_i, const int& d_j,
                  int& points_in_line);
 
-  bool checkLines();
-
   void getRandomPoints(const unordered_set<int>& field, vector<int>& seq_points,
                        const int& count_points);
+
+  void emitDataChanged(const int& index);
+  void emitDataChanged(const vector<int>& indexes);
+  void emitDataChanged(const unordered_set<int>& indexes);
 };
 
 #endif  // GAMEBOARD_H

@@ -12,20 +12,6 @@ GameBoard::GameBoard(const int height_field, const int width_field,
     m_field_free.insert(i);
   }
   addRandomPoints();
-  //  while (m_field_free.size()) {
-  //    addRandomPoints();
-
-  //    if (checkLines()) {
-  //      clearBingoRows();
-  //    }
-  //    if (m_field_free.size()) {
-  //      swapPoints();
-
-  //      if (checkLines()) {
-  //        clearBingoRows();
-  //      }
-  //    }
-  //  }
 }
 
 int GameBoard::rowCount(const QModelIndex& parent) const {
@@ -34,16 +20,14 @@ int GameBoard::rowCount(const QModelIndex& parent) const {
 }
 
 QVariant GameBoard::data(const QModelIndex& index, int role) const {
-  qDebug() << "role: " << role << " Qt::DisplayRole: " << (int)Qt::DisplayRole;
-  if (!index.isValid()) {
-    return {};
+  if (index.isValid() && role == Qt::DisplayRole) {
+    qDebug() << "index: " << index.row();
+    return QVariant::fromValue(m_field[index.row()]);
   }
-  if (role == Qt::DisplayRole) {
-    const auto rowIndex{index.row()};
-    return QVariant::fromValue(m_field[rowIndex]);
-  } else if (role == selectedBall_) {
-    return QVariant::fromValue(true);
-  }
+  return {};
+  //  else if (role == selectedBall_) {
+  //    return QVariant::fromValue(true);
+  //  }
 }
 
 QModelIndex GameBoard::index(int row, int column,
@@ -72,6 +56,7 @@ void GameBoard::clearBingoRows() {
     m_field_busy.erase(cell);
     m_field_free.insert(cell);
   }
+  emitDataChanged(m_field_for_free);
   m_field_for_free.clear();
 }
 
@@ -109,7 +94,52 @@ bool GameBoard::checkLines() {
       checkLine(i, j, 1, 1, points_in_line);
     }
   }
-  return m_field_for_free.size();
+  if (m_field_for_free.size()) {
+    clearBingoRows();
+    return true;
+  }
+  return false;
+}
+
+void GameBoard::emitDataChanged(const int& index) {
+  QModelIndex ind = GameBoard::index(index, 0);
+  emit dataChanged(ind, ind);
+}
+
+void GameBoard::emitDataChanged(const vector<int>& indexes) {
+  for (const auto& index : indexes) {
+    emitDataChanged(index);
+  }
+}
+
+void GameBoard::emitDataChanged(const unordered_set<int>& indexes) {
+  for (const auto& index : indexes) {
+    emitDataChanged(index);
+  }
+}
+
+bool GameBoard::setCurrentIndex(int newIndex) {
+  if (m_currentIndex == newIndex) {
+    m_currentIndex = -1;
+  } else {
+    m_currentIndex = newIndex;
+  }
+  return true;
+}
+
+int GameBoard::getCurrentIndex() { return m_currentIndex; }
+
+bool GameBoard::moveBall(int index) {
+  if (m_currentIndex == -1) return false;
+  swap(m_field[m_currentIndex], m_field[index]);
+  m_field_busy.erase(m_currentIndex);
+  m_field_busy.insert(index);
+  m_field_free.erase(index);
+  m_field_free.insert(m_currentIndex);
+  vector<int> indexes{index, m_currentIndex};
+  m_currentIndex = -1;
+  emitDataChanged(indexes);
+  return true;
 }
 
 void GameBoard::getRandomPoints(const unordered_set<int>& field,
@@ -121,36 +151,7 @@ void GameBoard::getRandomPoints(const unordered_set<int>& field,
          gen);
 }
 
-bool GameBoard::setCurrentIndex(int newCurrentIndex) {
-  m_currentIndex = newCurrentIndex;
-  //  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
-  //                   QAbstractItemModel::createIndex(m_boardSize, 0));
-  return true;
-}
-
-int GameBoard::getCurrentIndex() { return m_currentIndex; }
-
-bool GameBoard::swapPoints(int index) {
-  if (m_currentIndex == -1) return false;
-  swap(m_field[m_currentIndex], m_field[index]);
-  m_field_busy.erase(m_currentIndex);
-  m_field_busy.insert(index);
-  m_field_free.erase(index);
-  m_field_free.insert(m_currentIndex);
-  m_currentIndex = -1;
-  if (checkLines()) {
-    clearBingoRows();
-  }
-  addRandomPoints();
-  if (checkLines()) {
-    clearBingoRows();
-  }
-  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
-                   QAbstractItemModel::createIndex(m_boardSize, 0));
-  return true;
-}
-
-bool GameBoard::addRandomPoints() {
+void GameBoard::addRandomPoints() {
   getRandomPoints(m_field_free, m_seq_free_points, m_count_next_balls);
   for (const auto& n : m_seq_free_points) {
     auto gen = mt19937{random_device{}()};
@@ -159,10 +160,6 @@ bool GameBoard::addRandomPoints() {
     m_field_free.erase(n);
     m_field_busy.insert(n);
   }
-  if (checkLines()) {
-    clearBingoRows();
-  }
-  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
-                   QAbstractItemModel::createIndex(m_boardSize, 0));
-  return true;
+  emitDataChanged(m_seq_free_points);
+  checkLines();
 }
