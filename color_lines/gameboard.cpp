@@ -6,7 +6,7 @@ GameBoard::GameBoard(const int height_field, const int width_field,
       m_height_field{height_field},
       m_width_field{width_field},
       m_boardSize{m_height_field * m_width_field},
-      m_field(m_boardSize, default_color),
+      m_field(m_boardSize, {default_color, {}}),
       m_currentIndex{-1} {
   for (int i = 0; i < m_height_field * m_width_field; ++i) {
     m_field_free.insert(i);
@@ -20,14 +20,16 @@ int GameBoard::rowCount(const QModelIndex& parent) const {
 }
 
 QVariant GameBoard::data(const QModelIndex& index, int role) const {
-  if (index.isValid() && role == Qt::DisplayRole) {
-    qDebug() << "index: " << index.row();
-    return QVariant::fromValue(m_field[index.row()]);
+  if (index.isValid()) {
+    if (role == Qt::DisplayRole) {
+      qDebug() << "Qt::DisplayRole >>> index.row(): " << index.row();
+      return QVariant::fromValue(m_field[index.row()].first);
+
+    } else if (role == m_selectedBallRole) {
+      return QVariant(m_field[index.row()].second);
+    }
   }
-  return {};
-  //  else if (role == selectedBall_) {
-  //    return QVariant::fromValue(true);
-  //  }
+  return QVariant();
 }
 
 QModelIndex GameBoard::index(int row, int column,
@@ -46,13 +48,20 @@ int GameBoard::columnCount(const QModelIndex& parent) const {
   return {};
 }
 
+QHash<int, QByteArray> GameBoard::roleNames() const {
+  QHash<int, QByteArray> roles;
+  roles[m_displayRole] = "display";
+  roles[m_selectedBallRole] = "selectedBallRole";
+  return roles;
+}
+
 int GameBoard::height_field() const { return m_height_field; }
 
 int GameBoard::width_field() const { return m_width_field; }
 
 void GameBoard::clearBingoRows() {
   for (const auto& cell : m_field_for_free) {
-    m_field[cell] = default_color;
+    m_field[cell].first = default_color;
     m_field_busy.erase(cell);
     m_field_free.insert(cell);
   }
@@ -70,8 +79,8 @@ void GameBoard::checkLine(int i, int j, const int& d_i, const int& d_j,
       j + d_j < m_width_field) {
     int index1 = setIndexFromCoord(i, j);
     int index2 = setIndexFromCoord(i + d_i, j + d_j);
-    if (m_field[index1] != default_color &&
-        m_field[index1] == m_field[index2]) {
+    if (m_field[index1].first != default_color &&
+        m_field[index1].first == m_field[index2].first) {
       ++points_in_line;
       checkLine(i + d_i, j + d_j, d_i, d_j, points_in_line);
     }
@@ -118,13 +127,23 @@ void GameBoard::emitDataChanged(const unordered_set<int>& indexes) {
   }
 }
 
-bool GameBoard::setCurrentIndex(int newIndex) {
-  if (m_currentIndex == newIndex) {
-    m_currentIndex = -1;
-  } else {
+void GameBoard::setCurrentIndex(int newIndex) {
+  if (m_currentIndex == -1) {
+    m_field[newIndex].second = "clicked";
+    emit dataChanged(index(0, 0), index(m_boardSize, 0));
     m_currentIndex = newIndex;
+  } else {
+    if (m_currentIndex == newIndex) {
+      m_field[newIndex].second = "";
+      emit dataChanged(index(0, 0), index(m_boardSize, 0));
+    } else {
+      m_field[m_currentIndex].second = "";
+      emit dataChanged(index(0, 0), index(m_boardSize, 0));
+      m_field[newIndex].second = "clicked";
+      emit dataChanged(index(0, 0), index(m_boardSize, 0));
+    }
+    m_currentIndex = -1;
   }
-  return true;
 }
 
 int GameBoard::getCurrentIndex() { return m_currentIndex; }
@@ -156,7 +175,7 @@ void GameBoard::addRandomPoints() {
   for (const auto& n : m_seq_free_points) {
     auto gen = mt19937{random_device{}()};
     std::uniform_int_distribution<mt19937::result_type> color(0, 3);
-    m_field[n] = m_colors[color(gen)];
+    m_field[n].first = m_colors[color(gen)];
     m_field_free.erase(n);
     m_field_busy.insert(n);
   }

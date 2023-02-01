@@ -24,32 +24,34 @@ GridView {
                         if (!root.model.checkLines()) {
                             root.model.addRandomPoints()
                         }
-                    } else {
-
                     }
                 }
             }
             Ball {
                 id: ball
+                property string selectedBall
                 width: tile.width * 0.9
                 height: tile.width * 0.9
                 radius: tile.width
                 anchors.centerIn: tile
                 colorBall: model.display
-                selectedBall: model.display
-                //                selectedBall: model.edit
+                Text {
+                    text: model.selectedBallRole
+                }
+                selectedBall: model.selectedBallRole
                 visible: !Qt.colorEqual(model.display, "#000000")
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
                     onClicked: {
-//                        if (root.model.getCurrentIndex() !== -1
-//                                && root.model.getCurrentIndex(
-//                                    ) !== model.index) {
-//                            ball[root.model.getCurrentIndex()].state = ""
-//                        }
                         root.model.setCurrentIndex(model.index)
-                        ball.state === "clicked" ? ball.state = "" : ball.state = "clicked"
+                        console.log("model.selectedBallRole: ",
+                                    model.selectedBallRole)
+                        //                        if (model.selectedBallRole === "clicked")
+                        //                            ball.state = "clicked"
+                        //                        else if (model.selectedBallRole === "")
+                        //                            ball.state = ""
+                        ball.state === "" ? ball.state = "clicked" : ball.state = ""
                     }
                 }
                 states: [
@@ -57,7 +59,7 @@ GridView {
                         name: "clicked"
                         PropertyChanges {
                             target: ball
-                            selectedBall: true
+                            //                            selectedBall: true
                         }
                     },
                     State {
@@ -65,14 +67,14 @@ GridView {
                         PropertyChanges {
                             target: ball
                             scale: 1.0
-                            selectedBall: false
+                            //                            selectedBall: false
                         }
                     }
                 ]
                 transitions: [
                     Transition {
                         id: _transition_pulse
-                        from: ""
+                        from: "*"
                         to: "clicked"
                         SequentialAnimation {
                             id: _pulseAnimation
@@ -83,6 +85,7 @@ GridView {
                                 properties: "scale"
                                 to: 0.8
                                 duration: 500
+                                //                                running: model.selectedBallRole === "clicked"
                             }
                             NumberAnimation {
                                 id: _animationIncrease
@@ -90,12 +93,23 @@ GridView {
                                 properties: "scale"
                                 to: 1.0
                                 duration: 500
+                                //                                running: model.selectedBallRole === "clicked"
+                            }
+                        }
+                        onRunningChanged: {
+                            if (model.selectedBallRole === "" && !running) {
+                                if (state == "clicked") {
+                                    state = ""
+                                }
+                                if (state == "") {
+                                    state = "clicked"
+                                }
                             }
                         }
                     },
                     Transition {
                         from: "clicked"
-                        to: ""
+                        to: "*"
                     }
                 ]
             }

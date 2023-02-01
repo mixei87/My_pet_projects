@@ -6,6 +6,7 @@
 #include <algorithm>
 //#include <chrono>
 #include <QCoreApplication>
+#include <QString>
 #include <QThread>
 #include <QTimer>
 #include <random>
@@ -18,7 +19,10 @@ using namespace std;
 class GameBoard : public QAbstractItemModel {
   Q_OBJECT
  public:
-  enum ModelRoles { selectedBall_ = Qt::UserRole + 1 };
+  enum ModelRoles {
+    m_displayRole = Qt::DisplayRole,
+    m_selectedBallRole = Qt::UserRole + 1
+  };
 
   GameBoard(const int height_field = default_height_field,
             const int width_field = default_width_field,
@@ -28,7 +32,7 @@ class GameBoard : public QAbstractItemModel {
   int width_field() const;
   Q_INVOKABLE bool moveBall(int index);
   Q_INVOKABLE void addRandomPoints();
-  Q_INVOKABLE bool setCurrentIndex(int newIndex);
+  Q_INVOKABLE void setCurrentIndex(int newIndex);
   Q_INVOKABLE int getCurrentIndex();
   Q_INVOKABLE bool checkLines();
 
@@ -41,7 +45,7 @@ class GameBoard : public QAbstractItemModel {
   const int m_height_field;
   const int m_width_field;
   const int m_boardSize;
-  std::vector<QColor> m_field;
+  std::vector<pair<QColor, QString>> m_field;
   int m_currentIndex;
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
   QVariant data(const QModelIndex& index,
@@ -50,6 +54,7 @@ class GameBoard : public QAbstractItemModel {
                     const QModelIndex& parent = QModelIndex()) const override;
   QModelIndex parent(const QModelIndex& child) const override;
   int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+  QHash<int, QByteArray> roleNames() const override;
 
   const int m_count_next_balls = 3;
   const int m_points_in_row = 5;
