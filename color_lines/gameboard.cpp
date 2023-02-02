@@ -7,7 +7,7 @@ GameBoard::GameBoard(const int height_field, const int width_field,
       m_width_field{width_field},
       m_boardSize{m_height_field * m_width_field},
       m_field(m_boardSize, {default_color, {}}),
-      m_currentIndex{-1} {
+      m_selectedIndex{-1} {
   for (int i = 0; i < m_height_field * m_width_field; ++i) {
     m_field_free.insert(i);
   }
@@ -22,10 +22,13 @@ int GameBoard::rowCount(const QModelIndex& parent) const {
 QVariant GameBoard::data(const QModelIndex& index, int role) const {
   if (index.isValid()) {
     if (role == Qt::DisplayRole) {
-      qDebug() << "Qt::DisplayRole >>> index.row(): " << index.row();
+      //      qDebug() << "Qt::DisplayRole >>> index: " << index.row()
+      //               << " color: " << m_field[index.row()].first;
       return QVariant::fromValue(m_field[index.row()].first);
 
     } else if (role == m_selectedBallRole) {
+      //      qDebug() << "m_selectedBallRole >>> index: " << index.row()
+      //               << " state: " << m_field[index.row()].second;
       return QVariant(m_field[index.row()].second);
     }
   }
@@ -127,36 +130,35 @@ void GameBoard::emitDataChanged(const unordered_set<int>& indexes) {
   }
 }
 
-void GameBoard::setCurrentIndex(int newIndex) {
-  if (m_currentIndex == -1) {
-    m_field[newIndex].second = "clicked";
-    emit dataChanged(index(0, 0), index(m_boardSize, 0));
-    m_currentIndex = newIndex;
+void GameBoard::changeSelectedBalls(int new_index) {
+  if (new_index == m_selectedIndex) {
+    m_field[m_selectedIndex].second = "";
+    emitDataChanged(m_selectedIndex);
+    m_selectedIndex = -1;
+  } else if (m_selectedIndex == -1) {
+    m_field[new_index].second = "clicked";
+    emitDataChanged(new_index);
+    m_selectedIndex = new_index;
   } else {
-    if (m_currentIndex == newIndex) {
-      m_field[newIndex].second = "";
-      emit dataChanged(index(0, 0), index(m_boardSize, 0));
-    } else {
-      m_field[m_currentIndex].second = "";
-      emit dataChanged(index(0, 0), index(m_boardSize, 0));
-      m_field[newIndex].second = "clicked";
-      emit dataChanged(index(0, 0), index(m_boardSize, 0));
-    }
-    m_currentIndex = -1;
+    m_field[m_selectedIndex].second = "";
+    emitDataChanged(m_selectedIndex);
+    m_field[new_index].second = "clicked";
+    emitDataChanged(new_index);
+    m_selectedIndex = new_index;
   }
 }
 
-int GameBoard::getCurrentIndex() { return m_currentIndex; }
-
 bool GameBoard::moveBall(int index) {
-  if (m_currentIndex == -1) return false;
-  swap(m_field[m_currentIndex], m_field[index]);
-  m_field_busy.erase(m_currentIndex);
+  if (m_selectedIndex == -1) return false;
+  m_field[m_selectedIndex].second = "";
+  emitDataChanged(m_selectedIndex);
+  swap(m_field[m_selectedIndex], m_field[index]);
+  m_field_busy.erase(m_selectedIndex);
   m_field_busy.insert(index);
   m_field_free.erase(index);
-  m_field_free.insert(m_currentIndex);
-  vector<int> indexes{index, m_currentIndex};
-  m_currentIndex = -1;
+  m_field_free.insert(m_selectedIndex);
+  vector<int> indexes{index, m_selectedIndex};
+  m_selectedIndex = -1;
   emitDataChanged(indexes);
   return true;
 }

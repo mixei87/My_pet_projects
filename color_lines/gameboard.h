@@ -3,12 +3,9 @@
 
 #include <QAbstractItemModel>
 #include <QColor>
-#include <algorithm>
-//#include <chrono>
 #include <QCoreApplication>
 #include <QString>
-#include <QThread>
-#include <QTimer>
+#include <algorithm>
 #include <random>
 #include <unordered_map>
 #include <unordered_set>
@@ -32,8 +29,7 @@ class GameBoard : public QAbstractItemModel {
   int width_field() const;
   Q_INVOKABLE bool moveBall(int index);
   Q_INVOKABLE void addRandomPoints();
-  Q_INVOKABLE void setCurrentIndex(int newIndex);
-  Q_INVOKABLE int getCurrentIndex();
+  Q_INVOKABLE void changeSelectedBalls(int new_index);
   Q_INVOKABLE bool checkLines();
 
  private:
@@ -46,7 +42,7 @@ class GameBoard : public QAbstractItemModel {
   const int m_width_field;
   const int m_boardSize;
   std::vector<pair<QColor, QString>> m_field;
-  int m_currentIndex;
+  int m_selectedIndex;
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
   QVariant data(const QModelIndex& index,
                 int role = Qt::DisplayRole) const override;
@@ -73,7 +69,6 @@ class GameBoard : public QAbstractItemModel {
 
   Q_PROPERTY(int height_field READ height_field CONSTANT)
   Q_PROPERTY(int width_field READ width_field CONSTANT)
-  //  Q_PROPERTY(int)
 
   void clearBingoRows();
 

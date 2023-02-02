@@ -29,29 +29,18 @@ GridView {
             }
             Ball {
                 id: ball
-                property string selectedBall
                 width: tile.width * 0.9
                 height: tile.width * 0.9
                 radius: tile.width
                 anchors.centerIn: tile
                 colorBall: model.display
-                Text {
-                    text: model.selectedBallRole
-                }
-                selectedBall: model.selectedBallRole
+                state: model.selectedBallRole
                 visible: !Qt.colorEqual(model.display, "#000000")
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
                     onClicked: {
-                        root.model.setCurrentIndex(model.index)
-                        console.log("model.selectedBallRole: ",
-                                    model.selectedBallRole)
-                        //                        if (model.selectedBallRole === "clicked")
-                        //                            ball.state = "clicked"
-                        //                        else if (model.selectedBallRole === "")
-                        //                            ball.state = ""
-                        ball.state === "" ? ball.state = "clicked" : ball.state = ""
+                        root.model.changeSelectedBalls(model.index)
                     }
                 }
                 states: [
@@ -59,7 +48,6 @@ GridView {
                         name: "clicked"
                         PropertyChanges {
                             target: ball
-                            //                            selectedBall: true
                         }
                     },
                     State {
@@ -67,7 +55,6 @@ GridView {
                         PropertyChanges {
                             target: ball
                             scale: 1.0
-                            //                            selectedBall: false
                         }
                     }
                 ]
@@ -85,25 +72,14 @@ GridView {
                                 properties: "scale"
                                 to: 0.8
                                 duration: 500
-                                //                                running: model.selectedBallRole === "clicked"
+                                //
                             }
                             NumberAnimation {
                                 id: _animationIncrease
-                                target: ball
+                                target: ball // model.selected
                                 properties: "scale"
                                 to: 1.0
                                 duration: 500
-                                //                                running: model.selectedBallRole === "clicked"
-                            }
-                        }
-                        onRunningChanged: {
-                            if (model.selectedBallRole === "" && !running) {
-                                if (state == "clicked") {
-                                    state = ""
-                                }
-                                if (state == "") {
-                                    state = "clicked"
-                                }
                             }
                         }
                     },
