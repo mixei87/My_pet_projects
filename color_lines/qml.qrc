@@ -1,8 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>Tile.qml</file>
-        <file>Ball.qml</file>
-        <file>GameBoard.qml</file>
+        <file>resources/qml/Ball.qml</file>
+        <file>resources/qml/GameBoard.qml</file>
+        <file>resources/qml/main.qml</file>
+        <file>resources/qml/Tile.qml</file>
+        <file>resources/game.db</file>
     </qresource>
 </RCC>

@@ -1,5 +1,5 @@
-#ifndef GAMEBOARD_H
-#define GAMEBOARD_H
+#ifndef MODEL_GAME_H
+#define MODEL_GAME_H
 
 #include <QAbstractItemModel>
 #include <QColor>
@@ -8,7 +8,7 @@
 #include <unordered_set>
 #include <vector>
 
-class GameBoard : public QAbstractItemModel {
+class GameModel : public QAbstractItemModel {
   Q_OBJECT
  public:
   enum ModelRoles {
@@ -16,8 +16,8 @@ class GameBoard : public QAbstractItemModel {
     m_selectedBallRole = Qt::UserRole + 1
   };
 
-  GameBoard(int i, int j, QObject* parent = nullptr);
-  ~GameBoard(){};
+  GameModel(int i, int j, QObject* parent = nullptr);
+  ~GameModel(){};
 
   int height_field() const;
   int width_field() const;
@@ -83,4 +83,4 @@ class GameBoard : public QAbstractItemModel {
   Q_PROPERTY(int width_field READ width_field CONSTANT)
 };
 
-#endif  // GAMEBOARD_H
+#endif  // MODEL_GAME_H

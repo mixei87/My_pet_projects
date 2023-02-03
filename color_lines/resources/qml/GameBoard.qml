@@ -3,19 +3,18 @@ import Game 1.0
 
 GridView {
     id: root
-    model: GameBoardModel {}
     cellHeight: root.height / root.model.height_field
     cellWidth: root.width / root.model.width_field
     delegate: Item {
-        id: _backgroundDelegate
+        id: backgroundDelegate
         width: root.cellWidth
         height: root.cellHeight
         Tile {
             id: tile
-            anchors.fill: _backgroundDelegate
-            anchors.margins: _backgroundDelegate.width * 0.03
+            anchors.fill: backgroundDelegate
+            anchors.margins: backgroundDelegate.width * 0.03
             color: ((parseInt(
-                         model.index / root.model.height_field) + model.index
+                         root.model.index / root.model.height_field) + root.model.index
                      % root.model.width_field) % 2) ? "#c0c0c0" : "#e3e3e3"
             MouseArea {
                 anchors.fill: parent
@@ -43,6 +42,7 @@ GridView {
                         root.model.changeSelectedBalls(model.index)
                     }
                 }
+
                 states: [
                     State {
                         name: "clicked"
@@ -60,26 +60,25 @@ GridView {
                 ]
                 transitions: [
                     Transition {
-                        id: _transition_pulse
+                        id: transition_pulse
                         from: "*"
                         to: "clicked"
                         SequentialAnimation {
-                            id: _pulseAnimation
+                            id: pulseAnimation
                             loops: Animation.Infinite
                             NumberAnimation {
-                                id: _animationReduce
+                                id: animationReduce
                                 target: ball
                                 properties: "scale"
                                 to: 0.8
-                                duration: 500
-                                //
+                                duration: 350
                             }
                             NumberAnimation {
-                                id: _animationIncrease
-                                target: ball // model.selected
+                                id: animationIncrease
+                                target: ball
                                 properties: "scale"
                                 to: 1.0
-                                duration: 500
+                                duration: 350
                             }
                         }
                     },
@@ -90,5 +89,11 @@ GridView {
                 ]
             }
         }
+    }
+    GameController_qml {
+        id: gameController
+    }
+    Component.onCompleted: {
+        root.model = gameController.getModel()
     }
 }

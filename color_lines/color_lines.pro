@@ -1,4 +1,4 @@
-QT += quick
+QT += quick sql
 
 CONFIG += c++17
 
@@ -6,7 +6,10 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += gameboard.cpp main.cpp
+SOURCES += main.cpp \
+    ../../my_pet_projects/color_lines/controller_game.cpp \
+    ../../my_pet_projects/color_lines/model_game.cpp \
+    DBmanager.cpp
 
 RESOURCES += qml.qrc
 
@@ -21,4 +24,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-HEADERS += gameboard.h
+HEADERS += \
+    ../../my_pet_projects/color_lines/controller_game.h \
+    ../../my_pet_projects/color_lines/model_game.h \
+    DBmanager.h
+
+ICON = resources/images/color_balls.icns
+
+DISTFILES +=
