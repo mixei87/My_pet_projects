@@ -1,9 +1,12 @@
 #include "model_game.h"
 
-GameModel::GameModel(int i, int j, QObject* parent)
+GameModel::GameModel(Settings& settings, QObject* parent)
     : QAbstractItemModel{parent},
-      m_height_field{i},
-      m_width_field{j},
+      m_default_color{settings.m_default_color},
+      m_count_next_balls{settings.m_count_next_balls},
+      m_points_in_row{settings.m_points_in_row},
+      m_height_field{settings.m_height_field},
+      m_width_field{settings.m_width_field},
       m_boardSize{m_height_field * m_width_field},
       m_field(m_boardSize, {m_default_color, {}}),
       m_selected_index{-1} {
@@ -13,17 +16,89 @@ GameModel::GameModel(int i, int j, QObject* parent)
   addRandomPoints();
 }
 
+int GameModel::height_field() const { return m_height_field; }
+
+int GameModel::width_field() const { return m_width_field; }
+
+void GameModel::addRandomPoints() {
+  getRandomPoints();
+  for (const auto& n : m_seq_free_points) {
+    auto gen = std::mt19937{std::random_device{}()};
+    std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
+    m_field[n].first = m_colors[color(gen)];
+    m_field_free.erase(n);
+    m_field_busy.insert(n);
+  }
+  emitDataChanged(m_seq_free_points);
+  checkLines();
+}
+
+bool GameModel::checkLines() {
+  for (int i = 0; i < m_height_field; ++i) {
+    for (int j = 0; j < m_width_field; ++j) {
+      checkDirection(i, j, m_directions["right"]);
+      checkDirection(i, j, m_directions["down"]);
+      // ---- optionality for diagonals --------------------------------
+      //      checkDirection(i, j, m_directions["left_down_diagonal"]);
+      //      checkDirection(i, j, m_directions["right_down_diagonal"]);
+    }
+  }
+  if (m_field_for_free.size()) {
+    clearBingoRows();
+    return true;
+  }
+  return false;
+}
+
+bool GameModel::moveBall(int free_index) {
+  if (m_selected_index == -1) return false;
+  m_field[m_selected_index].second = "";
+  emitDataChanged(m_selected_index);
+  swap(m_field[m_selected_index], m_field[free_index]);
+  m_field_busy.erase(m_selected_index);
+  m_field_busy.insert(free_index);
+  m_field_free.erase(free_index);
+  m_field_free.insert(m_selected_index);
+  std::vector<int> indexes{free_index, m_selected_index};
+  m_selected_index = -1;
+  emitDataChanged(indexes);
+  return true;
+}
+
+void GameModel::changeSelectedBalls(int new_index) {
+  if (new_index == m_selected_index) {
+    m_field[m_selected_index].second = "";
+    emitDataChanged(m_selected_index);
+    m_selected_index = -1;
+  } else if (m_selected_index == -1) {
+    m_field[new_index].second = "clicked";
+    emitDataChanged(new_index);
+    m_selected_index = new_index;
+  } else {
+    m_field[m_selected_index].second = "";
+    emitDataChanged(m_selected_index);
+    m_field[new_index].second = "clicked";
+    emitDataChanged(new_index);
+    m_selected_index = new_index;
+  }
+}
+
 int GameModel::rowCount(const QModelIndex& parent) const {
   Q_UNUSED(parent);
   return m_field.size();
 }
 
+int GameModel::columnCount(const QModelIndex& parent) const {
+  Q_UNUSED(parent);
+  return {};
+}
+
 QVariant GameModel::data(const QModelIndex& index, int role) const {
   if (index.isValid()) {
     if (role == Qt::DisplayRole) {
-      return QVariant::fromValue(m_field[index.row()].first);
+      return m_field[index.row()].first;
     } else if (role == m_selectedBallRole) {
-      return QVariant(m_field[index.row()].second);
+      return m_field[index.row()].second;
     }
   }
   return QVariant();
@@ -40,11 +115,6 @@ QModelIndex GameModel::parent(const QModelIndex& child) const {
   return {};
 }
 
-int GameModel::columnCount(const QModelIndex& parent) const {
-  Q_UNUSED(parent);
-  return {};
-}
-
 QHash<int, QByteArray> GameModel::roleNames() const {
   QHash<int, QByteArray> roles;
   roles[m_displayRole] = "display";
@@ -52,9 +122,12 @@ QHash<int, QByteArray> GameModel::roleNames() const {
   return roles;
 }
 
-int GameModel::height_field() const { return m_height_field; }
-
-int GameModel::width_field() const { return m_width_field; }
+void GameModel::getRandomPoints() {
+  m_seq_free_points.clear();
+  auto gen = std::mt19937{std::random_device{}()};
+  sample(begin(m_field_free), end(m_field_free),
+         back_inserter(m_seq_free_points), m_count_next_balls, gen);
+}
 
 void GameModel::clearBingoRows() {
   for (const auto& cell : m_field_for_free) {
@@ -66,7 +139,7 @@ void GameModel::clearBingoRows() {
   m_field_for_free.clear();
 }
 
-int GameModel::setIndexFromCoord(const int& i, const int& j) {
+int GameModel::setIndexFromCoord(const int& i, const int& j) const {
   return i * m_height_field + j;
 }
 
@@ -94,23 +167,6 @@ void GameModel::checkDirection(const int& i, const int& j,
   checkLine(i, j, diff_indexes.first, diff_indexes.second, points_in_line);
 }
 
-bool GameModel::checkLines() {
-  for (int i = 0; i < m_height_field; ++i) {
-    for (int j = 0; j < m_width_field; ++j) {
-      checkDirection(i, j, m_directions["right"]);
-      checkDirection(i, j, m_directions["down"]);
-      // ---- optionality for diagonals --------------------------------
-      //      checkDirection(i, j, m_directions["left_down_diagonal"]);
-      //      checkDirection(i, j, m_directions["right_down_diagonal"]);
-    }
-  }
-  if (m_field_for_free.size()) {
-    clearBingoRows();
-    return true;
-  }
-  return false;
-}
-
 void GameModel::emitDataChanged(const int& index) {
   QModelIndex ind = GameModel::index(index, 0);
   emit dataChanged(ind, ind);
@@ -126,57 +182,4 @@ void GameModel::emitDataChanged(const std::unordered_set<int>& indexes) {
   for (const auto& index : indexes) {
     emitDataChanged(index);
   }
-}
-
-void GameModel::changeSelectedBalls(int new_index) {
-  if (new_index == m_selected_index) {
-    m_field[m_selected_index].second = "";
-    emitDataChanged(m_selected_index);
-    m_selected_index = -1;
-  } else if (m_selected_index == -1) {
-    m_field[new_index].second = "clicked";
-    emitDataChanged(new_index);
-    m_selected_index = new_index;
-  } else {
-    m_field[m_selected_index].second = "";
-    emitDataChanged(m_selected_index);
-    m_field[new_index].second = "clicked";
-    emitDataChanged(new_index);
-    m_selected_index = new_index;
-  }
-}
-
-bool GameModel::moveBall(int free_index) {
-  if (m_selected_index == -1) return false;
-  m_field[m_selected_index].second = "";
-  emitDataChanged(m_selected_index);
-  swap(m_field[m_selected_index], m_field[free_index]);
-  m_field_busy.erase(m_selected_index);
-  m_field_busy.insert(free_index);
-  m_field_free.erase(free_index);
-  m_field_free.insert(m_selected_index);
-  std::vector<int> indexes{free_index, m_selected_index};
-  m_selected_index = -1;
-  emitDataChanged(indexes);
-  return true;
-}
-
-void GameModel::getRandomPoints() {
-  m_seq_free_points.clear();
-  auto gen = std::mt19937{std::random_device{}()};
-  sample(begin(m_field_free), end(m_field_free),
-         back_inserter(m_seq_free_points), m_count_next_balls, gen);
-}
-
-void GameModel::addRandomPoints() {
-  getRandomPoints();
-  for (const auto& n : m_seq_free_points) {
-    auto gen = std::mt19937{std::random_device{}()};
-    std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
-    m_field[n].first = m_colors[color(gen)];
-    m_field_free.erase(n);
-    m_field_busy.insert(n);
-  }
-  emitDataChanged(m_seq_free_points);
-  checkLines();
 }

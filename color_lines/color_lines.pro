@@ -9,7 +9,8 @@ CONFIG += c++17
 SOURCES += main.cpp \
     ../../my_pet_projects/color_lines/controller_game.cpp \
     ../../my_pet_projects/color_lines/model_game.cpp \
-    DBmanager.cpp
+    DBmanager.cpp \
+    settings.cpp
 
 RESOURCES += qml.qrc
 
@@ -27,7 +28,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     ../../my_pet_projects/color_lines/controller_game.h \
     ../../my_pet_projects/color_lines/model_game.h \
-    DBmanager.h
+    DBmanager.h \
+    settings.h
 
 ICON = resources/images/color_balls.icns
 

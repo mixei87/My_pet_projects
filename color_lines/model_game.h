@@ -8,6 +8,8 @@
 #include <unordered_set>
 #include <vector>
 
+#include "settings.h"
+
 class GameModel : public QAbstractItemModel {
   Q_OBJECT
  public:
@@ -16,7 +18,7 @@ class GameModel : public QAbstractItemModel {
     m_selectedBallRole = Qt::UserRole + 1
   };
 
-  GameModel(int i, int j, QObject* parent = nullptr);
+  GameModel(Settings& settings, QObject* parent = nullptr);
   ~GameModel(){};
 
   int height_field() const;
@@ -28,9 +30,6 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE void changeSelectedBalls(int new_index);
 
  private:
-  static const int m_default_height_field{9};
-  static const int m_default_width_field{9};
-
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
   int columnCount(const QModelIndex& parent = QModelIndex()) const override;
   QVariant data(const QModelIndex& index,
@@ -40,25 +39,25 @@ class GameModel : public QAbstractItemModel {
   QModelIndex parent(const QModelIndex& child) const override;
   QHash<int, QByteArray> roleNames() const override;
 
+  void getRandomPoints();
   void clearBingoRows();
-  int setIndexFromCoord(const int& i, const int& j);
+  int setIndexFromCoord(const int& i, const int& j) const;
   void checkLine(int i, int j, const int& d_i, const int& d_j,
                  int& points_in_line);
   void checkDirection(const int& i, const int& j,
                       const std::pair<int, int>& diff_indexes);
-  void getRandomPoints();
   void emitDataChanged(const int& index);
   void emitDataChanged(const std::vector<int>& indexes);
   void emitDataChanged(const std::unordered_set<int>& indexes);
 
-  const int m_height_field;
-  const int m_width_field;
-  const int m_boardSize;
+  QColor m_default_color;
+  int m_count_next_balls;
+  int m_points_in_row;
+  int m_height_field;
+  int m_width_field;
+  int m_boardSize;
   std::vector<std::pair<QColor, QString>> m_field;
   int m_selected_index;
-  const QColor m_default_color{Qt::black};
-  const int m_count_next_balls = 3;
-  const int m_points_in_row = 5;
 
   std::unordered_set<int> m_field_free;
   std::unordered_set<int> m_field_busy;
