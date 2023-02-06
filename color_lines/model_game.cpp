@@ -14,6 +14,7 @@ GameModel::GameModel(Settings& settings, QObject* parent)
     m_field_free.insert(i);
   }
   addRandomPoints();
+  settings.m_game_is_started = true;
 }
 
 int GameModel::height_field() const { return m_height_field; }
@@ -47,6 +48,7 @@ bool GameModel::checkLines() {
     clearBingoRows();
     return true;
   }
+  if (m_seq_free_points.empty()) finishGame();
   return false;
 }
 
@@ -181,5 +183,13 @@ void GameModel::emitDataChanged(const std::vector<int>& indexes) {
 void GameModel::emitDataChanged(const std::unordered_set<int>& indexes) {
   for (const auto& index : indexes) {
     emitDataChanged(index);
+  }
+}
+
+void GameModel::finishGame() {
+  bool finish_game = true;
+  if (finish_game) {
+    DBmanager db(QDir::currentPath() + "/../resources/game.db");
+    db.updateGameboardTable();
   }
 }

@@ -3,11 +3,13 @@
 
 #include <QAbstractItemModel>
 #include <QColor>
+#include <QDir>
 #include <random>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
+#include "DBmanager.h"
 #include "settings.h"
 
 class GameModel : public QAbstractItemModel {
@@ -49,6 +51,7 @@ class GameModel : public QAbstractItemModel {
   void emitDataChanged(const int& index);
   void emitDataChanged(const std::vector<int>& indexes);
   void emitDataChanged(const std::unordered_set<int>& indexes);
+  void finishGame();
 
   QColor m_default_color;
   int m_count_next_balls;
@@ -67,7 +70,7 @@ class GameModel : public QAbstractItemModel {
   std::vector<int> m_seq_busy_points;
 
   std::unordered_map<int, QColor> m_colors{
-      {0, QColorConstants::Svg::deeppink},
+      {0, Qt::red},
       {1, QColorConstants::Svg::mediumseagreen},
       {2, QColorConstants::Svg::cornflowerblue},
       {3, QColorConstants::Svg::gold}};

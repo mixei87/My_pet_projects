@@ -6,6 +6,9 @@ GameController::GameController(QObject* parent) : QObject(parent) {
   m_gameModel = new GameModel(m_settings);
 }
 
-GameController::~GameController() { delete m_gameModel; }
+GameController::~GameController() {
+  qDebug() << "destructor of controller";
+  delete m_gameModel;
+}
 
 GameModel* GameController::getModel() { return m_gameModel; }
