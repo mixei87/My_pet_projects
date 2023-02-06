@@ -2,7 +2,7 @@
 
 GameModel::GameModel(Settings& settings, QObject* parent)
     : QAbstractItemModel{parent},
-      m_default_color{settings.m_default_color},
+      m_default_color{QColor(settings.m_default_color)},
       m_count_next_balls{settings.m_count_next_balls},
       m_points_in_row{settings.m_points_in_row},
       m_height_field{settings.m_height_field},

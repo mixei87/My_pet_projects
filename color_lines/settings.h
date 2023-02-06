@@ -7,7 +7,7 @@ class Settings {
   Settings();
   ~Settings(){};
 
-  QColor m_default_color;
+  int m_default_color;
   int m_count_next_balls;
   int m_points_in_row;
   int m_height_field;
