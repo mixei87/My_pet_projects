@@ -1,7 +1,5 @@
 #include "settings.h"
 
-Settings *Settings::m_settings = nullptr;
-
 Settings::Settings()
     : m_default_color{Qt::black},
       m_count_next_balls{3},
@@ -12,13 +10,10 @@ Settings::Settings()
       m_field(m_board_size, {m_default_color, {}}),
       m_game_is_started{false} {}
 
-Settings::~Settings() { delete m_settings; }
-
-Settings *Settings::getSettings() {
-  if (!m_settings) m_settings = new Settings();
+Settings &Settings::getSettings() {
+  static Settings m_settings;
   return m_settings;
 }
-// update tbl_gameboard set color = "#ff0000
 
 const QColor &Settings::default_color() const { return m_default_color; }
 

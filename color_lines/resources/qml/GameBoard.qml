@@ -21,7 +21,8 @@ GridView {
                 onClicked: {
                     if (root.model.moveBall(model.index)) {
                         if (!root.model.checkLines()) {
-                            root.model.addRandomPoints()
+                            if (!root.model.addRandomPoints())
+                                Qt.quit()
                         }
                     }
                 }

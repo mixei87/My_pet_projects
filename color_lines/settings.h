@@ -6,9 +6,10 @@
 
 class Settings {
  public:
+  ~Settings(){};
   Settings(Settings& other) = delete;
   void operator=(const Settings&) = delete;
-  static Settings* getSettings();
+  static Settings& getSettings();
 
   const QColor& default_color() const;
   void setDefault_color(const QColor& newDefault_color);
@@ -30,9 +31,6 @@ class Settings {
 
  private:
   Settings();
-  ~Settings();
-
-  static Settings* m_settings;
 
   QColor m_default_color;
   int m_count_next_balls;

@@ -1,40 +1,51 @@
 #include "model_game.h"
 
 GameModel::GameModel(QObject* parent) : QAbstractItemModel{parent} {
-  DBmanager db(QDir::currentPath() + "/../resources/game.db");
-  db.selectSettingsTable();
-
-  m_settings = Settings::getSettings();
   initialiseVariables();
-
-  for (int i = 0; i < m_settings->board_size(); ++i) {
-    m_field_free.insert(i);
+  if (!Settings::getSettings().game_is_started()) {
+    addRandomPoints();
   }
-  addRandomPoints();
 }
 
-void GameModel::initialiseVariables() { m_selected_index = -1; }
+GameModel::~GameModel() { finishGame(); }
 
-int GameModel::height_field() const { return m_settings->height_field(); }
+void GameModel::initialiseVariables() {
+  for (size_t i = 0; i < Settings::getSettings().field().size(); ++i) {
+    m_field.push_back({Settings::getSettings().field()[i].first,
+                       Settings::getSettings().field()[i].second});
+    if (Settings::getSettings().field()[i].first ==
+        Settings::getSettings().default_color())
+      m_free_tiles.insert(i);
+  }
+  m_selected_index = -1;
+}
 
-int GameModel::width_field() const { return m_settings->width_field(); }
+int GameModel::height_field() const {
+  return Settings::getSettings().height_field();
+}
 
-void GameModel::addRandomPoints() {
+int GameModel::width_field() const {
+  return Settings::getSettings().width_field();
+}
+
+bool GameModel::addRandomPoints() {
   getRandomPoints();
-  for (const auto& n : m_seq_free_points) {
+  for (const auto& n : m_few_free_points) {
     auto gen = std::mt19937{std::random_device{}()};
     std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
     m_field[n].first = m_colors[color(gen)];
-    m_field_free.erase(n);
-    m_field_busy.insert(n);
+    m_free_tiles.erase(n);
+    m_busy_tiles.insert(n);
   }
-  emitDataChanged(m_seq_free_points);
+  emitDataChanged(m_few_free_points);
   checkLines();
+  if (m_free_tiles.empty()) return false;
+  return true;
 }
 
 bool GameModel::checkLines() {
-  for (int i = 0; i < m_settings->height_field(); ++i) {
-    for (int j = 0; j < m_settings->width_field(); ++j) {
+  for (int i = 0; i < Settings::getSettings().height_field(); ++i) {
+    for (int j = 0; j < Settings::getSettings().width_field(); ++j) {
       checkDirection(i, j, m_directions["right"]);
       checkDirection(i, j, m_directions["down"]);
       // ---- optionality for diagonals --------------------------------
@@ -42,24 +53,57 @@ bool GameModel::checkLines() {
       //      checkDirection(i, j, m_directions["right_down_diagonal"]);
     }
   }
-  if (m_field_for_free.size()) {
+  if (m_tiles_bingo.size()) {
     clearBingoRows();
     return true;
   }
-  if (m_seq_free_points.empty()) finishGame();
   return false;
+}
+
+void GameModel::checkDirection(const int& i, const int& j,
+                               const std::pair<int, int>& diff_indexes) {
+  int points_in_line = 1;
+  checkLine(i, j, diff_indexes.first, diff_indexes.second, points_in_line);
+}
+
+void GameModel::checkLine(int i, int j, const int& d_i, const int& d_j,
+                          int& points_in_line) {
+  if (i + d_i >= 0 && i + d_i < Settings::getSettings().height_field() &&
+      j + d_j >= 0 && j + d_j < Settings::getSettings().width_field()) {
+    int index1 = setIndexFromCoord(i, j);
+    int index2 = setIndexFromCoord(i + d_i, j + d_j);
+    if (m_field[index1].first != Settings::getSettings().default_color() &&
+        m_field[index1].first == m_field[index2].first) {
+      ++points_in_line;
+      checkLine(i + d_i, j + d_j, d_i, d_j, points_in_line);
+    }
+  }
+  // if need EXACT match quantity in row - you need change '>=' to '=='
+  if (points_in_line >= Settings::getSettings().points_in_row()) {
+    m_tiles_bingo.insert(setIndexFromCoord(i, j));
+  }
+}
+
+void GameModel::clearBingoRows() {
+  for (const auto& cell : m_tiles_bingo) {
+    m_field[cell].first = Settings::getSettings().default_color();
+    m_busy_tiles.erase(cell);
+    m_free_tiles.insert(cell);
+  }
+  emitDataChanged(m_tiles_bingo);
+  m_tiles_bingo.clear();
 }
 
 bool GameModel::moveBall(int free_index) {
   if (m_selected_index == -1) return false;
-  m_settings->setGame_is_started(true);
+  Settings::getSettings().setGame_is_started(true);
   m_field[m_selected_index].second = "";
   emitDataChanged(m_selected_index);
   swap(m_field[m_selected_index], m_field[free_index]);
-  m_field_busy.erase(m_selected_index);
-  m_field_busy.insert(free_index);
-  m_field_free.erase(free_index);
-  m_field_free.insert(m_selected_index);
+  m_busy_tiles.erase(m_selected_index);
+  m_busy_tiles.insert(free_index);
+  m_free_tiles.erase(free_index);
+  m_free_tiles.insert(m_selected_index);
   std::vector<int> indexes{free_index, m_selected_index};
   m_selected_index = -1;
   emitDataChanged(indexes);
@@ -124,48 +168,15 @@ QHash<int, QByteArray> GameModel::roleNames() const {
 }
 
 void GameModel::getRandomPoints() {
-  m_seq_free_points.clear();
+  m_few_free_points.clear();
   auto gen = std::mt19937{std::random_device{}()};
-  sample(begin(m_field_free), end(m_field_free),
-         back_inserter(m_seq_free_points), m_settings->count_next_balls(), gen);
-}
-
-void GameModel::clearBingoRows() {
-  for (const auto& cell : m_field_for_free) {
-    m_field[cell].first = m_settings->default_color();
-    m_field_busy.erase(cell);
-    m_field_free.insert(cell);
-  }
-  emitDataChanged(m_field_for_free);
-  m_field_for_free.clear();
+  sample(begin(m_free_tiles), end(m_free_tiles),
+         back_inserter(m_few_free_points),
+         Settings::getSettings().count_next_balls(), gen);
 }
 
 int GameModel::setIndexFromCoord(const int& i, const int& j) const {
-  return i * m_settings->height_field() + j;
-}
-
-void GameModel::checkLine(int i, int j, const int& d_i, const int& d_j,
-                          int& points_in_line) {
-  if (i + d_i >= 0 && i + d_i < m_settings->height_field() && j + d_j >= 0 &&
-      j + d_j < m_settings->width_field()) {
-    int index1 = setIndexFromCoord(i, j);
-    int index2 = setIndexFromCoord(i + d_i, j + d_j);
-    if (m_field[index1].first != m_settings->default_color() &&
-        m_field[index1].first == m_field[index2].first) {
-      ++points_in_line;
-      checkLine(i + d_i, j + d_j, d_i, d_j, points_in_line);
-    }
-  }
-  // if need EXACT match quantity in row - you need change '>=' to '=='
-  if (points_in_line >= m_settings->points_in_row()) {
-    m_field_for_free.insert(setIndexFromCoord(i, j));
-  }
-}
-
-void GameModel::checkDirection(const int& i, const int& j,
-                               const std::pair<int, int>& diff_indexes) {
-  int points_in_line = 1;
-  checkLine(i, j, diff_indexes.first, diff_indexes.second, points_in_line);
+  return i * Settings::getSettings().height_field() + j;
 }
 
 void GameModel::emitDataChanged(const int& index) {
@@ -186,9 +197,14 @@ void GameModel::emitDataChanged(const std::unordered_set<int>& indexes) {
 }
 
 void GameModel::finishGame() {
-  bool finish_game = true;
-  if (finish_game) {
-    DBmanager db(QDir::currentPath() + "/../resources/game.db");
-    db.updateGameboardTable();
+  if (Settings::getSettings().game_is_started()) {
+    for (size_t i = 0; i < m_field.size(); ++i) {
+      Settings::getSettings().setField(i, m_field[i].first);
+    }
+  } else {
+    for (size_t i = 0; i < m_field.size(); ++i) {
+      Settings::getSettings().setField(i,
+                                       Settings::getSettings().default_color());
+    }
   }
 }

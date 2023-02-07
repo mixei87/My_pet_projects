@@ -11,9 +11,7 @@ int main(int argc, char *argv[]) {
 #endif
   QGuiApplication app(argc, argv);
 
-  //  qmlRegisterType<GameModel>("Game", 1, 0, "GameModel_qml");
   qmlRegisterType<GameController>("Game", 1, 0, "GameController_qml");
-  qDebug() << "color" << Qt::red;
   QQmlApplicationEngine engine;
   const QUrl url(QStringLiteral("qrc:/resources/qml/main.qml"));
   QObject::connect(

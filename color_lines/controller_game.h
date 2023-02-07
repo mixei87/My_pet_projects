@@ -1,8 +1,10 @@
 #ifndef CONTROLLER_GAME_H
 #define CONTROLLER_GAME_H
 
+#include <QDir>
 #include <QObject>
 
+#include "DBmanager.h"
 #include "model_game.h"
 
 class GameController : public QObject {
@@ -15,6 +17,7 @@ class GameController : public QObject {
 
  private:
   GameModel* m_gameModel;
+  DBmanager* m_db;
 };
 
 #endif  // CONTROLLER_GAME_H

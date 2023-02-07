@@ -4,18 +4,12 @@ DBmanager::DBmanager(const QString &path) {
   m_db = QSqlDatabase::addDatabase("QSQLITE");
   m_db.setDatabaseName(path);
   m_tables = new _table_and_columns;
-  if (m_db.open())
-    qDebug() << "Database: connection ok";
-  else
-    qDebug() << "Error: fail connection with database";
-  m_settings = Settings::getSettings();
+  if (!m_db.open()) qDebug() << "Error: fail connection with database";
   if (isTableNotExist(m_table_name_settings)) {
     if (createSettingsTable()) insertSettingsTable();
   }
   if (isTableNotExist(m_table_name_gameboard)) {
-    qDebug() << "begin create GameboardTable";
     if (createGameboardTable()) {
-      qDebug() << "begin insert in GameboardTable";
       insertGameboardTable();
     }
   }
@@ -25,7 +19,6 @@ DBmanager::~DBmanager() {
   delete m_tables;
   if (m_db.isOpen()) {
     m_db.close();
-    qDebug() << "db is close";
   }
 }
 
@@ -71,12 +64,41 @@ bool DBmanager::insertSettingsTable() {
                m_tables->table_settings.game_is_started));
 
   query.bindValue(":id", 1);
-  query.bindValue(":default_color", m_settings->default_color());
-  query.bindValue(":count_next_balls", m_settings->count_next_balls());
-  query.bindValue(":points_in_row", m_settings->points_in_row());
-  query.bindValue(":height_field", m_settings->height_field());
-  query.bindValue(":width_field", m_settings->width_field());
-  query.bindValue(":game_is_started", m_settings->game_is_started());
+  query.bindValue(":default_color", Settings::getSettings().default_color());
+  query.bindValue(":count_next_balls",
+                  Settings::getSettings().count_next_balls());
+  query.bindValue(":points_in_row", Settings::getSettings().points_in_row());
+  query.bindValue(":height_field", Settings::getSettings().height_field());
+  query.bindValue(":width_field", Settings::getSettings().width_field());
+  query.bindValue(":game_is_started",
+                  Settings::getSettings().game_is_started());
+  if (!query.exec()) return false;
+  return true;
+}
+
+bool DBmanager::updateSettingsTable() {
+  QSqlQuery query;
+  query.prepare(
+      QString("UPDATE %1 SET %2 = :default_color, %3 = "
+              ":count_next_balls, %4 = :points_in_row, %5 = "
+              ":height_field, %6 =:width_field, %7 = :game_is_started "
+              "WHERE %8 = :id;")
+          .arg(m_table_name_settings, m_tables->table_settings.default_color,
+               m_tables->table_settings.count_next_balls,
+               m_tables->table_settings.points_in_row,
+               m_tables->table_settings.height_field,
+               m_tables->table_settings.width_field,
+               m_tables->table_settings.game_is_started,
+               m_tables->table_settings.id));
+  query.bindValue(":id", 1);
+  query.bindValue(":default_color", Settings::getSettings().default_color());
+  query.bindValue(":count_next_balls",
+                  Settings::getSettings().count_next_balls());
+  query.bindValue(":points_in_row", Settings::getSettings().points_in_row());
+  query.bindValue(":height_field", Settings::getSettings().height_field());
+  query.bindValue(":width_field", Settings::getSettings().width_field());
+  query.bindValue(":game_is_started",
+                  Settings::getSettings().game_is_started());
   if (!query.exec()) return false;
   return true;
 }
@@ -96,12 +118,17 @@ void DBmanager::selectSettingsTable() {
   int name_game_is_started =
       rec.indexOf(m_tables->table_settings.game_is_started);
 
-  m_settings->setDefault_color(query.value(name_default_color).value<QColor>());
-  m_settings->setCount_next_balls(query.value(name_count_next_balls).toInt());
-  m_settings->setPoints_in_row(query.value(name_points_in_row).toInt());
-  m_settings->setHeight_field(query.value(name_height_field).toInt());
-  m_settings->setWidth_field(query.value(name_width_field).toInt());
-  m_settings->setGame_is_started(query.value(name_game_is_started).toInt());
+  Settings::getSettings().setDefault_color(
+      query.value(name_default_color).value<QColor>());
+  Settings::getSettings().setCount_next_balls(
+      query.value(name_count_next_balls).toInt());
+  Settings::getSettings().setPoints_in_row(
+      query.value(name_points_in_row).toInt());
+  Settings::getSettings().setHeight_field(
+      query.value(name_height_field).toInt());
+  Settings::getSettings().setWidth_field(query.value(name_width_field).toInt());
+  Settings::getSettings().setGame_is_started(
+      query.value(name_game_is_started).toInt());
 }
 
 bool DBmanager::createGameboardTable() {
@@ -121,10 +148,10 @@ bool DBmanager::insertGameboardTable() {
   QVariantList id;
   QVariantList index;
   QVariantList color;
-  for (int i = 0; i < m_settings->board_size(); ++i) {
+  for (int i = 0; i < Settings::getSettings().board_size(); ++i) {
     id << i + 1;
     index << i;
-    color << m_settings->default_color();
+    color << Settings::getSettings().default_color();
   }
 
   QSqlQuery query;
@@ -137,10 +164,7 @@ bool DBmanager::insertGameboardTable() {
   query.addBindValue(index);
   query.addBindValue(color);
 
-  if (!query.execBatch())
-    qDebug() << query.lastError();
-  else
-    qDebug() << "insertGameboardTable is true";
+  if (!query.execBatch()) return false;
   return true;
 }
 
@@ -153,23 +177,23 @@ void DBmanager::selectGameBoardTable() {
   int name_index = rec.indexOf(m_tables->table_gameboard.index);
   int name_color = rec.indexOf(m_tables->table_gameboard.color);
   while (query.next()) {
-    m_settings->setField(query.value(name_index).toInt(),
-                         query.value(name_color).value<QColor>());
+    Settings::getSettings().setField(query.value(name_index).toInt(),
+                                     query.value(name_color).value<QColor>());
   }
 }
 
 bool DBmanager::updateGameboardTable() {
-  std::vector<std::pair<QColor, QString>> field = m_settings->field();
-  bool isUpdate = true && field.size();
+  bool isUpdate = true && Settings::getSettings().field().size();
 
-  for (size_t index = 0; index < field.size(); ++index) {
+  for (size_t index = 0; index < Settings::getSettings().field().size();
+       ++index) {
     QSqlQuery query;
     query.prepare(QString("UPDATE %1 SET %2 = :color WHERE %3 = :index;")
                       .arg(m_table_name_gameboard,
                            m_tables->table_gameboard.color,
                            m_tables->table_gameboard.index));
     query.bindValue(":index", static_cast<int>(index));
-    query.bindValue(":color", field[index].first);
+    query.bindValue(":color", Settings::getSettings().field()[index].first);
     if (!query.exec()) isUpdate = false;
   }
   return isUpdate;

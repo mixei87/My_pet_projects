@@ -3,14 +3,11 @@
 
 #include <QAbstractItemModel>
 #include <QColor>
-#include <QDir>
-//#include <QStandardPaths>
 #include <random>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
-#include "DBmanager.h"
 #include "settings.h"
 
 class GameModel : public QAbstractItemModel {
@@ -22,12 +19,12 @@ class GameModel : public QAbstractItemModel {
   };
 
   GameModel(QObject* parent = nullptr);
-  ~GameModel(){};
+  ~GameModel();
 
   int height_field() const;
   int width_field() const;
 
-  Q_INVOKABLE void addRandomPoints();
+  Q_INVOKABLE bool addRandomPoints();
   Q_INVOKABLE bool checkLines();
   Q_INVOKABLE bool moveBall(int free_index);
   Q_INVOKABLE void changeSelectedBalls(int new_index);
@@ -55,19 +52,17 @@ class GameModel : public QAbstractItemModel {
   void emitDataChanged(const std::unordered_set<int>& indexes);
   void finishGame();
 
-  Settings* m_settings;
   std::vector<std::pair<QColor, QString>> m_field;
   int m_selected_index;
 
-  std::unordered_set<int> m_field_free;
-  std::unordered_set<int> m_field_busy;
-  std::unordered_set<int> m_field_for_free;
+  std::unordered_set<int> m_free_tiles;
+  std::unordered_set<int> m_busy_tiles;
+  std::unordered_set<int> m_tiles_bingo;
 
-  std::vector<int> m_seq_free_points;
-  std::vector<int> m_seq_busy_points;
+  std::vector<int> m_few_free_points;
 
   std::unordered_map<int, QColor> m_colors{
-      {0, Qt::red},
+      {0, QColorConstants::Svg::deeppink},
       {1, QColorConstants::Svg::mediumseagreen},
       {2, QColorConstants::Svg::cornflowerblue},
       {3, QColorConstants::Svg::gold}};

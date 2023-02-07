@@ -16,6 +16,7 @@ class DBmanager {
   ~DBmanager();
 
   void selectSettingsTable();
+  bool updateSettingsTable();
   void selectGameBoardTable();
   bool updateGameboardTable();
 
@@ -42,9 +43,9 @@ class DBmanager {
   } _table_and_columns;
 
   bool createSettingsTable();
-  bool isTableNotExist(const QString &table);
   bool insertSettingsTable();
-  //  bool changeSettings(const QString &);
+
+  bool isTableNotExist(const QString &table);
 
   bool createGameboardTable();
   bool insertGameboardTable();
@@ -53,7 +54,6 @@ class DBmanager {
   _table_and_columns *m_tables;
   QString m_table_name_settings = "tbl_settings";
   QString m_table_name_gameboard = "tbl_gameboard";
-  Settings *m_settings;
 };
 
 #endif  // DBMANAGER_H
