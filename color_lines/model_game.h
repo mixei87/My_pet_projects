@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QColor>
 #include <QDir>
+//#include <QStandardPaths>
 #include <random>
 #include <unordered_map>
 #include <unordered_set>
@@ -20,7 +21,7 @@ class GameModel : public QAbstractItemModel {
     m_selectedBallRole = Qt::UserRole + 1
   };
 
-  GameModel(Settings& settings, QObject* parent = nullptr);
+  GameModel(QObject* parent = nullptr);
   ~GameModel(){};
 
   int height_field() const;
@@ -41,6 +42,7 @@ class GameModel : public QAbstractItemModel {
   QModelIndex parent(const QModelIndex& child) const override;
   QHash<int, QByteArray> roleNames() const override;
 
+  void initialiseVariables();
   void getRandomPoints();
   void clearBingoRows();
   int setIndexFromCoord(const int& i, const int& j) const;
@@ -53,12 +55,7 @@ class GameModel : public QAbstractItemModel {
   void emitDataChanged(const std::unordered_set<int>& indexes);
   void finishGame();
 
-  QColor m_default_color;
-  int m_count_next_balls;
-  int m_points_in_row;
-  int m_height_field;
-  int m_width_field;
-  int m_boardSize;
+  Settings* m_settings;
   std::vector<std::pair<QColor, QString>> m_field;
   int m_selected_index;
 

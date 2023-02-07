@@ -1,25 +1,23 @@
 #include "model_game.h"
 
-GameModel::GameModel(Settings& settings, QObject* parent)
-    : QAbstractItemModel{parent},
-      m_default_color{QColor(settings.m_default_color)},
-      m_count_next_balls{settings.m_count_next_balls},
-      m_points_in_row{settings.m_points_in_row},
-      m_height_field{settings.m_height_field},
-      m_width_field{settings.m_width_field},
-      m_boardSize{m_height_field * m_width_field},
-      m_field(m_boardSize, {m_default_color, {}}),
-      m_selected_index{-1} {
-  for (int i = 0; i < m_boardSize; ++i) {
+GameModel::GameModel(QObject* parent) : QAbstractItemModel{parent} {
+  DBmanager db(QDir::currentPath() + "/../resources/game.db");
+  db.selectSettingsTable();
+
+  m_settings = Settings::getSettings();
+  initialiseVariables();
+
+  for (int i = 0; i < m_settings->board_size(); ++i) {
     m_field_free.insert(i);
   }
   addRandomPoints();
-  settings.m_game_is_started = true;
 }
 
-int GameModel::height_field() const { return m_height_field; }
+void GameModel::initialiseVariables() { m_selected_index = -1; }
 
-int GameModel::width_field() const { return m_width_field; }
+int GameModel::height_field() const { return m_settings->height_field(); }
+
+int GameModel::width_field() const { return m_settings->width_field(); }
 
 void GameModel::addRandomPoints() {
   getRandomPoints();
@@ -35,8 +33,8 @@ void GameModel::addRandomPoints() {
 }
 
 bool GameModel::checkLines() {
-  for (int i = 0; i < m_height_field; ++i) {
-    for (int j = 0; j < m_width_field; ++j) {
+  for (int i = 0; i < m_settings->height_field(); ++i) {
+    for (int j = 0; j < m_settings->width_field(); ++j) {
       checkDirection(i, j, m_directions["right"]);
       checkDirection(i, j, m_directions["down"]);
       // ---- optionality for diagonals --------------------------------
@@ -54,6 +52,7 @@ bool GameModel::checkLines() {
 
 bool GameModel::moveBall(int free_index) {
   if (m_selected_index == -1) return false;
+  m_settings->setGame_is_started(true);
   m_field[m_selected_index].second = "";
   emitDataChanged(m_selected_index);
   swap(m_field[m_selected_index], m_field[free_index]);
@@ -128,12 +127,12 @@ void GameModel::getRandomPoints() {
   m_seq_free_points.clear();
   auto gen = std::mt19937{std::random_device{}()};
   sample(begin(m_field_free), end(m_field_free),
-         back_inserter(m_seq_free_points), m_count_next_balls, gen);
+         back_inserter(m_seq_free_points), m_settings->count_next_balls(), gen);
 }
 
 void GameModel::clearBingoRows() {
   for (const auto& cell : m_field_for_free) {
-    m_field[cell].first = m_default_color;
+    m_field[cell].first = m_settings->default_color();
     m_field_busy.erase(cell);
     m_field_free.insert(cell);
   }
@@ -142,23 +141,23 @@ void GameModel::clearBingoRows() {
 }
 
 int GameModel::setIndexFromCoord(const int& i, const int& j) const {
-  return i * m_height_field + j;
+  return i * m_settings->height_field() + j;
 }
 
 void GameModel::checkLine(int i, int j, const int& d_i, const int& d_j,
                           int& points_in_line) {
-  if (i + d_i >= 0 && i + d_i < m_height_field && j + d_j >= 0 &&
-      j + d_j < m_width_field) {
+  if (i + d_i >= 0 && i + d_i < m_settings->height_field() && j + d_j >= 0 &&
+      j + d_j < m_settings->width_field()) {
     int index1 = setIndexFromCoord(i, j);
     int index2 = setIndexFromCoord(i + d_i, j + d_j);
-    if (m_field[index1].first != m_default_color &&
+    if (m_field[index1].first != m_settings->default_color() &&
         m_field[index1].first == m_field[index2].first) {
       ++points_in_line;
       checkLine(i + d_i, j + d_j, d_i, d_j, points_in_line);
     }
   }
   // if need EXACT match quantity in row - you need change '>=' to '=='
-  if (points_in_line >= m_points_in_row) {
+  if (points_in_line >= m_settings->points_in_row()) {
     m_field_for_free.insert(setIndexFromCoord(i, j));
   }
 }

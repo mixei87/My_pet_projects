@@ -15,7 +15,8 @@ class DBmanager {
   DBmanager(const QString &path);
   ~DBmanager();
 
-  Settings &getSettings();
+  void selectSettingsTable();
+  void selectGameBoardTable();
   bool updateGameboardTable();
 
  private:
@@ -52,7 +53,7 @@ class DBmanager {
   _table_and_columns *m_tables;
   QString m_table_name_settings = "tbl_settings";
   QString m_table_name_gameboard = "tbl_gameboard";
-  Settings m_settings;
+  Settings *m_settings;
 };
 
 #endif  // DBMANAGER_H
