@@ -1,6 +1,8 @@
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Layouts
+import QtQuick
+import QtQuick.Window
+//import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Dialogs
 
 Window {
     id: root
@@ -19,4 +21,18 @@ Window {
         width: Math.min(root.width, root.height)
         height: width
     }
+    //    Dialog {
+    //        id: dialogNewGame
+    //        title: "GAME OVER"
+    //        standardButtons: Dialog.OK | Dialog.Cansel
+    //        width: parent.width
+    //        height: parent.height
+    //    }
+
+    //    Button {
+    //        id: openFinishGameButton
+    //        anchors.centerIn: parent
+    //        text: "click me"
+    //        onClicked: dialogFinishGame.open()
+    //    }
 }

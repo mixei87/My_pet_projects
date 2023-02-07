@@ -8,7 +8,9 @@ Settings::Settings()
       m_width_field{9},
       m_board_size{m_height_field * m_width_field},
       m_field(m_board_size, {m_default_color, {}}),
-      m_game_is_started{false} {}
+      m_game_is_started{false} {
+  qDebug() << "game_is_started5" << m_game_is_started;
+}
 
 Settings &Settings::getSettings() {
   static Settings m_settings;
@@ -48,7 +50,9 @@ void Settings::setWidth_field(int newWidth_field) {
 bool Settings::game_is_started() const { return m_game_is_started; }
 
 void Settings::setGame_is_started(bool newGame_is_started) {
+  qDebug() << "game_is_started6" << m_game_is_started;
   m_game_is_started = newGame_is_started;
+  qDebug() << "game_is_started11" << m_game_is_started;
 }
 
 int Settings::board_size() const { return m_board_size; }

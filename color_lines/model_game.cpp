@@ -2,12 +2,33 @@
 
 GameModel::GameModel(QObject* parent) : QAbstractItemModel{parent} {
   initialiseVariables();
+  qDebug() << "game_is_started7" << Settings::getSettings().game_is_started();
   if (!Settings::getSettings().game_is_started()) {
     addRandomPoints();
   }
 }
 
 GameModel::~GameModel() { finishGame(); }
+
+void GameModel::newGame() {
+  Settings::getSettings().setGame_is_started(false);
+
+  m_field.clear();
+  m_free_tiles.clear();
+  m_busy_tiles.clear();
+  m_tiles_bingo.clear();
+  m_few_free_points.clear();
+
+  for (int i = 0; i < Settings::getSettings().board_size(); ++i) {
+    m_field.push_back({Settings::getSettings().default_color(), QString{}});
+    m_free_tiles.insert(i);
+  }
+  m_selected_index = -1;
+  QModelIndex ind1 = GameModel::index(0, 0);
+  QModelIndex ind2 = GameModel::index(Settings::getSettings().board_size(), 0);
+  emit dataChanged(ind1, ind2);
+  addRandomPoints();
+}
 
 void GameModel::initialiseVariables() {
   for (size_t i = 0; i < Settings::getSettings().field().size(); ++i) {
@@ -28,7 +49,7 @@ int GameModel::width_field() const {
   return Settings::getSettings().width_field();
 }
 
-bool GameModel::addRandomPoints() {
+void GameModel::addRandomPoints() {
   getRandomPoints();
   for (const auto& n : m_few_free_points) {
     auto gen = std::mt19937{std::random_device{}()};
@@ -39,8 +60,6 @@ bool GameModel::addRandomPoints() {
   }
   emitDataChanged(m_few_free_points);
   checkLines();
-  if (m_free_tiles.empty()) return false;
-  return true;
 }
 
 bool GameModel::checkLines() {
@@ -96,7 +115,9 @@ void GameModel::clearBingoRows() {
 
 bool GameModel::moveBall(int free_index) {
   if (m_selected_index == -1) return false;
+  qDebug() << "game_is_started8" << Settings::getSettings().game_is_started();
   Settings::getSettings().setGame_is_started(true);
+  qDebug() << "game_is_started9" << Settings::getSettings().game_is_started();
   m_field[m_selected_index].second = "";
   emitDataChanged(m_selected_index);
   swap(m_field[m_selected_index], m_field[free_index]);
@@ -126,6 +147,11 @@ void GameModel::changeSelectedBalls(int new_index) {
     emitDataChanged(new_index);
     m_selected_index = new_index;
   }
+}
+
+bool GameModel::isGameOver() {
+  if (m_free_tiles.empty()) return true;
+  return false;
 }
 
 int GameModel::rowCount(const QModelIndex& parent) const {
@@ -197,6 +223,7 @@ void GameModel::emitDataChanged(const std::unordered_set<int>& indexes) {
 }
 
 void GameModel::finishGame() {
+  qDebug() << "game_is_started10" << Settings::getSettings().game_is_started();
   if (Settings::getSettings().game_is_started()) {
     for (size_t i = 0; i < m_field.size(); ++i) {
       Settings::getSettings().setField(i, m_field[i].first);

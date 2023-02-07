@@ -24,10 +24,12 @@ class GameModel : public QAbstractItemModel {
   int height_field() const;
   int width_field() const;
 
-  Q_INVOKABLE bool addRandomPoints();
+  Q_INVOKABLE void addRandomPoints();
   Q_INVOKABLE bool checkLines();
   Q_INVOKABLE bool moveBall(int free_index);
   Q_INVOKABLE void changeSelectedBalls(int new_index);
+  Q_INVOKABLE bool isGameOver();
+  Q_INVOKABLE void newGame();
 
  private:
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;

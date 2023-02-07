@@ -10,6 +10,7 @@ GameController::GameController(QObject* parent) : QObject(parent) {
 GameController::~GameController() {
   delete m_gameModel;
   m_db->updateGameboardTable();
+  m_db->updateSettingsTable();
   delete m_db;
 }
 

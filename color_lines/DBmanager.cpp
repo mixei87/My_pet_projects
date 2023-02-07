@@ -23,6 +23,7 @@ DBmanager::~DBmanager() {
 }
 
 bool DBmanager::createSettingsTable() {
+  qDebug() << "game_is_started1";
   QSqlQuery query;
   query.prepare(
       QString(
@@ -50,6 +51,7 @@ bool DBmanager::isTableNotExist(const QString &table) {
 }
 
 bool DBmanager::insertSettingsTable() {
+  qDebug() << "game_is_started2";
   QSqlQuery query;
   query.prepare(
       QString("INSERT INTO %1 (%2, %3, %4, %5, %6, %7, %8) VALUES(:id, "
@@ -77,6 +79,7 @@ bool DBmanager::insertSettingsTable() {
 }
 
 bool DBmanager::updateSettingsTable() {
+  qDebug() << "game_is_started3";
   QSqlQuery query;
   query.prepare(
       QString("UPDATE %1 SET %2 = :default_color, %3 = "
@@ -104,10 +107,15 @@ bool DBmanager::updateSettingsTable() {
 }
 
 void DBmanager::selectSettingsTable() {
+  qDebug() << "game_is_started4" << Settings::getSettings().game_is_started();
   QSqlQuery query;
   query.prepare(
       QString("SELECT * FROM %1 WHERE id = 1;").arg(m_table_name_settings));
-  if (!query.exec() || !query.next()) return;
+  if (!query.exec() || !query.next()) {
+    qDebug() << "EXIT selectSettingsTable";
+    return;
+  }
+  qDebug() << "not EXIT selectSettingsTable";
   QSqlRecord rec = query.record();
   int name_default_color = rec.indexOf(m_tables->table_settings.default_color);
   int name_count_next_balls =
@@ -117,7 +125,16 @@ void DBmanager::selectSettingsTable() {
   int name_width_field = rec.indexOf(m_tables->table_settings.width_field);
   int name_game_is_started =
       rec.indexOf(m_tables->table_settings.game_is_started);
+  qDebug() << "int names:" << name_default_color << " " << name_count_next_balls
+           << " " << name_points_in_row << " " << name_height_field << " "
+           << name_width_field << " " << name_game_is_started;
 
+  qDebug() << "int names:" << query.value(name_default_color).value<QColor>()
+           << " " << query.value(name_count_next_balls).toInt() << " "
+           << query.value(name_points_in_row).toInt() << " "
+           << query.value(name_height_field).toInt() << " "
+           << query.value(name_width_field).toInt() << " "
+           << query.value(name_game_is_started).toBool();
   Settings::getSettings().setDefault_color(
       query.value(name_default_color).value<QColor>());
   Settings::getSettings().setCount_next_balls(
@@ -128,7 +145,8 @@ void DBmanager::selectSettingsTable() {
       query.value(name_height_field).toInt());
   Settings::getSettings().setWidth_field(query.value(name_width_field).toInt());
   Settings::getSettings().setGame_is_started(
-      query.value(name_game_is_started).toInt());
+      query.value(name_game_is_started).toBool());
+  qDebug() << "game_is_started12" << Settings::getSettings().game_is_started();
 }
 
 bool DBmanager::createGameboardTable() {
