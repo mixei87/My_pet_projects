@@ -6,5 +6,7 @@
         <file>resources/qml/Tile.qml</file>
         <file>resources/game.db</file>
         <file>resources/qml/DialogFinishGame.qml</file>
+        <file>resources/qml/ButtonNewGame.qml</file>
+        <file>resources/qml/LabelRecord.qml</file>
     </qresource>
 </RCC>

@@ -2,7 +2,6 @@
 
 GameModel::GameModel(QObject* parent) : QAbstractItemModel{parent} {
   initialiseVariables();
-  qDebug() << "game_is_started7" << Settings::getSettings().game_is_started();
   if (!Settings::getSettings().game_is_started()) {
     addRandomPoints();
   }
@@ -115,9 +114,7 @@ void GameModel::clearBingoRows() {
 
 bool GameModel::moveBall(int free_index) {
   if (m_selected_index == -1) return false;
-  qDebug() << "game_is_started8" << Settings::getSettings().game_is_started();
   Settings::getSettings().setGame_is_started(true);
-  qDebug() << "game_is_started9" << Settings::getSettings().game_is_started();
   m_field[m_selected_index].second = "";
   emitDataChanged(m_selected_index);
   swap(m_field[m_selected_index], m_field[free_index]);
@@ -223,7 +220,6 @@ void GameModel::emitDataChanged(const std::unordered_set<int>& indexes) {
 }
 
 void GameModel::finishGame() {
-  qDebug() << "game_is_started10" << Settings::getSettings().game_is_started();
   if (Settings::getSettings().game_is_started()) {
     for (size_t i = 0; i < m_field.size(); ++i) {
       Settings::getSettings().setField(i, m_field[i].first);
