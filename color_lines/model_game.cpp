@@ -2,34 +2,44 @@
 
 GameModel::GameModel(QObject* parent) : QAbstractItemModel{parent} {
   newGame(Settings::getSettings().game_is_started());
-  if (!Settings::getSettings().game_is_started()) {
-    addRandomPoints();
-  }
 }
 
 GameModel::~GameModel() { finishGame(); }
 
 void GameModel::newGame(bool game_is_started) {
   Settings::getSettings().setGame_is_started(game_is_started);
-  initialiseVariables();
+  initialiseVariables(game_is_started);
+  if (!game_is_started) {
+    addRandomPoints();
+  }
 }
 
-void GameModel::initialiseVariables() {
+void GameModel::setRecord() {
+  if (m_score > Settings::getSettings().record())
+    Settings::getSettings().setRecord(m_score);
+}
+
+QString GameModel::record() const {
+  return QString::number(Settings::getSettings().record());
+}
+
+void GameModel::initialiseVariables(const bool& game_is_started) {
   m_field.clear();
   m_free_tiles.clear();
   m_busy_tiles.clear();
   m_tiles_bingo.clear();
   m_few_free_points.clear();
-
-  bool game_is_started = Settings::getSettings().game_is_started();
   fillGameBoard(game_is_started);
   m_selected_index = -1;
-  m_score = 0;
+  if (game_is_started)
+    m_score = Settings::getSettings().current_score();
+  else
+    m_score = 0;
   emit dataChanged(GameModel::index(0, 0),
                    GameModel::index(Settings::getSettings().field().size(), 0));
 }
 
-void GameModel::fillGameBoard(bool game_is_started) {
+void GameModel::fillGameBoard(const bool& game_is_started) {
   QColor default_color = Settings::getSettings().default_color();
   QColor color;
   for (size_t i = 0; i < Settings::getSettings().field().size(); ++i) {
@@ -109,6 +119,7 @@ void GameModel::clearBingoRows() {
     m_field[cell].first = Settings::getSettings().default_color();
     m_busy_tiles.erase(cell);
     m_free_tiles.insert(cell);
+    m_score += Settings::getSettings().points_to_1_ball();
   }
   emitDataChanged(m_tiles_bingo);
   m_tiles_bingo.clear();
@@ -222,14 +233,20 @@ void GameModel::emitDataChanged(const std::unordered_set<int>& indexes) {
 }
 
 void GameModel::finishGame() {
+  if (m_free_tiles.empty()) Settings::getSettings().setGame_is_started(false);
   if (Settings::getSettings().game_is_started()) {
     for (size_t i = 0; i < m_field.size(); ++i) {
       Settings::getSettings().setField(i, m_field[i].first);
     }
+    Settings::getSettings().setCurrent_score(m_score);
   } else {
+    setRecord();
     for (size_t i = 0; i < m_field.size(); ++i) {
       Settings::getSettings().setField(i,
                                        Settings::getSettings().default_color());
     }
+    Settings::getSettings().setCurrent_score(0);
   }
 }
+
+QString GameModel::score() const { return QString::number(m_score); }

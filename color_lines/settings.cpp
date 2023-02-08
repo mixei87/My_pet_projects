@@ -8,7 +8,9 @@ Settings::Settings()
       m_width_field{9},
       m_field(m_height_field * m_width_field, {m_default_color}),
       m_game_is_started{false},
-      m_record{0} {}
+      m_record{0},
+      m_points_to_1_ball{2},
+      m_current_score{0} {}
 
 Settings &Settings::getSettings() {
   static Settings m_settings;
@@ -60,3 +62,15 @@ void Settings::setField(const int &index, const QColor color) {
 int Settings::record() const { return m_record; }
 
 void Settings::setRecord(int newRecord) { m_record = newRecord; }
+
+int Settings::points_to_1_ball() const { return m_points_to_1_ball; }
+
+void Settings::setPoints_to_1_ball(int newPoints_to_1_ball) {
+  m_points_to_1_ball = newPoints_to_1_ball;
+}
+
+int Settings::current_score() const { return m_current_score; }
+
+void Settings::setCurrent_score(int newCurrent_score) {
+  m_current_score = newCurrent_score;
+}

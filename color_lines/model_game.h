@@ -30,6 +30,10 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE void changeSelectedBalls(int new_index);
   Q_INVOKABLE bool isGameOver();
   Q_INVOKABLE void newGame(bool game_is_started = false);
+  Q_INVOKABLE void setRecord();
+
+  QString record() const;
+  QString score() const;
 
  private:
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
@@ -41,8 +45,8 @@ class GameModel : public QAbstractItemModel {
   QModelIndex parent(const QModelIndex& child) const override;
   QHash<int, QByteArray> roleNames() const override;
 
-  void initialiseVariables();
-  void fillGameBoard(bool game_is_started);
+  void initialiseVariables(const bool& game_is_started);
+  void fillGameBoard(const bool& game_is_started);
   void getRandomPoints();
   void clearBingoRows();
   int setIndexFromCoord(const int& i, const int& j) const;
@@ -75,6 +79,8 @@ class GameModel : public QAbstractItemModel {
 
   Q_PROPERTY(int height_field READ height_field CONSTANT)
   Q_PROPERTY(int width_field READ width_field CONSTANT)
+  Q_PROPERTY(QString score READ score CONSTANT)
+  Q_PROPERTY(QString record READ record CONSTANT)
 };
 
 #endif  // MODEL_GAME_H

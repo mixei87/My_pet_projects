@@ -5,7 +5,6 @@ import QtQuick.Dialogs
 
 GridView {
     id: root
-
     cellHeight: root.height / root.model.height_field
     cellWidth: root.width / root.model.width_field
 
@@ -26,9 +25,13 @@ GridView {
                     if (root.model.moveBall(model.index)) {
                         if (!root.model.checkLines()) {
                             root.model.addRandomPoints()
+                        } else {
+                            scoreGame.text = root.model.score
                         }
                     }
                     if (root.model.isGameOver()) {
+                        root.model.setRecord()
+                        recordGame.text = root.model.record
                         dialogFinishGame.visible = true
                         root.model.changeSelectedBalls(model.index)
                     }
@@ -45,6 +48,8 @@ GridView {
                     onClicked: {
                         root.model.changeSelectedBalls(model.index)
                         if (root.model.isGameOver()) {
+                            root.model.setRecord()
+                            recordGame.text = root.model.record
                             dialogFinishGame.visible = true
                             root.model.changeSelectedBalls(model.index)
                         }
@@ -105,8 +110,11 @@ GridView {
             if (index === 0) {
                 Qt.quit()
             } else if (index === 1) {
+                root.model.setRecord()
                 visible = false
                 root.model.newGame()
+                recordGame.text = root.model.record
+                scoreGame.text = root.model.score
             }
         }
     }

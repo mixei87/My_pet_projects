@@ -28,7 +28,7 @@ bool DBmanager::createSettingsTable() {
       QString(
           "CREATE TABLE '%1' (%2 INTEGER PRIMARY KEY AUTOINCREMENT, %3 TEXT,"
           "%4 INTEGER, %5 INTEGER, %6 INTEGER, %7 INTEGER, %8 BOOL, %9 "
-          "INTEGER);")
+          "INTEGER, %10 INTEGER, %11 INTEGER);")
           .arg(m_table_name_settings, m_tables->table_settings.id,
                m_tables->table_settings.default_color,
                m_tables->table_settings.count_next_balls,
@@ -36,7 +36,9 @@ bool DBmanager::createSettingsTable() {
                m_tables->table_settings.height_field,
                m_tables->table_settings.width_field,
                m_tables->table_settings.game_is_started,
-               m_tables->table_settings.record));
+               m_tables->table_settings.record,
+               m_tables->table_settings.points_to_1_ball,
+               m_tables->table_settings.current_score));
   if (!query.exec()) return false;
   return true;
 }
@@ -54,45 +56,22 @@ bool DBmanager::isTableNotExist(const QString &table) {
 bool DBmanager::insertSettingsTable() {
   QSqlQuery query;
   query.prepare(
-      QString("INSERT INTO %1 (%2, %3, %4, %5, %6, %7, %8) VALUES(:id, "
+      QString("INSERT INTO %1 (%2, %3, %4, %5, %6, %7, %8, %9, %10, %11) "
+              "VALUES(:id, "
               ":default_color, :count_next_balls, :points_in_row, "
-              ":height_field, :width_field, :game_is_started, 0);")
+              ":height_field, :width_field, :game_is_started, :record, "
+              ":points_to_1_ball, :current_score);")
           .arg(m_table_name_settings, m_tables->table_settings.id,
                m_tables->table_settings.default_color,
                m_tables->table_settings.count_next_balls,
                m_tables->table_settings.points_in_row,
                m_tables->table_settings.height_field,
                m_tables->table_settings.width_field,
-               m_tables->table_settings.game_is_started));
-
-  query.bindValue(":id", 1);
-  query.bindValue(":default_color", Settings::getSettings().default_color());
-  query.bindValue(":count_next_balls",
-                  Settings::getSettings().count_next_balls());
-  query.bindValue(":points_in_row", Settings::getSettings().points_in_row());
-  query.bindValue(":height_field", Settings::getSettings().height_field());
-  query.bindValue(":width_field", Settings::getSettings().width_field());
-  query.bindValue(":game_is_started",
-                  Settings::getSettings().game_is_started());
-  if (!query.exec()) return false;
-  return true;
-}
-
-bool DBmanager::updateSettingsTable() {
-  QSqlQuery query;
-  query.prepare(
-      QString("UPDATE %1 SET %2 = :default_color, %3 = "
-              ":count_next_balls, %4 = :points_in_row, %5 = "
-              ":height_field, %6 =:width_field, %7 = :game_is_started, %8 = "
-              ":record "
-              "WHERE %9 = :id;")
-          .arg(m_table_name_settings, m_tables->table_settings.default_color,
-               m_tables->table_settings.count_next_balls,
-               m_tables->table_settings.points_in_row,
-               m_tables->table_settings.height_field,
-               m_tables->table_settings.width_field,
                m_tables->table_settings.game_is_started,
-               m_tables->table_settings.record, m_tables->table_settings.id));
+               m_tables->table_settings.record,
+               m_tables->table_settings.points_to_1_ball,
+               m_tables->table_settings.current_score));
+
   query.bindValue(":id", 1);
   query.bindValue(":default_color", Settings::getSettings().default_color());
   query.bindValue(":count_next_balls",
@@ -103,6 +82,45 @@ bool DBmanager::updateSettingsTable() {
   query.bindValue(":game_is_started",
                   Settings::getSettings().game_is_started());
   query.bindValue(":record", Settings::getSettings().record());
+  query.bindValue(":points_to_1_ball",
+                  Settings::getSettings().points_to_1_ball());
+  query.bindValue(":current_score", Settings::getSettings().current_score());
+  if (!query.exec()) return false;
+  return true;
+}
+
+bool DBmanager::updateSettingsTable() {
+  QSqlQuery query;
+  query.prepare(
+      QString("UPDATE %1 SET %3 = :default_color, %4 = "
+              ":count_next_balls, %5 = :points_in_row, %6 = :height_field, "
+              "%7 =:width_field, %8 = :game_is_started, %9 = :record, "
+              "%10 = :points_to_1_ball, %11 = :current_score "
+              "WHERE %2= :id;")
+          .arg(m_table_name_settings, m_tables->table_settings.id,
+               m_tables->table_settings.default_color,
+               m_tables->table_settings.count_next_balls,
+               m_tables->table_settings.points_in_row,
+               m_tables->table_settings.height_field,
+               m_tables->table_settings.width_field,
+               m_tables->table_settings.game_is_started,
+               m_tables->table_settings.record,
+               m_tables->table_settings.points_to_1_ball,
+               m_tables->table_settings.current_score));
+
+  query.bindValue(":id", 1);
+  query.bindValue(":default_color", Settings::getSettings().default_color());
+  query.bindValue(":count_next_balls",
+                  Settings::getSettings().count_next_balls());
+  query.bindValue(":points_in_row", Settings::getSettings().points_in_row());
+  query.bindValue(":height_field", Settings::getSettings().height_field());
+  query.bindValue(":width_field", Settings::getSettings().width_field());
+  query.bindValue(":game_is_started",
+                  Settings::getSettings().game_is_started());
+  query.bindValue(":record", Settings::getSettings().record());
+  query.bindValue(":points_to_1_ball",
+                  Settings::getSettings().points_to_1_ball());
+  query.bindValue(":current_score", Settings::getSettings().current_score());
   if (!query.exec()) return false;
   return true;
 }
@@ -124,6 +142,9 @@ void DBmanager::selectSettingsTable() {
   int name_game_is_started =
       rec.indexOf(m_tables->table_settings.game_is_started);
   int name_record = rec.indexOf(m_tables->table_settings.record);
+  int name_points_to_1_ball =
+      rec.indexOf(m_tables->table_settings.points_to_1_ball);
+  int name_current_score = rec.indexOf(m_tables->table_settings.current_score);
 
   Settings::getSettings().setDefault_color(
       query.value(name_default_color).value<QColor>());
@@ -137,6 +158,10 @@ void DBmanager::selectSettingsTable() {
   Settings::getSettings().setGame_is_started(
       query.value(name_game_is_started).toBool());
   Settings::getSettings().setRecord(query.value(name_record).toInt());
+  Settings::getSettings().setPoints_to_1_ball(
+      query.value(name_points_to_1_ball).toInt());
+  Settings::getSettings().setCurrent_score(
+      query.value(name_current_score).toInt());
 }
 
 bool DBmanager::createGameboardTable() {

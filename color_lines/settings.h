@@ -31,6 +31,13 @@ class Settings {
   int record() const;
   void setRecord(int newRecord);
 
+  int points_to_1_ball() const;
+
+  void setPoints_to_1_ball(int newPoints_to_1_ball);
+
+  int current_score() const;
+  void setCurrent_score(int newCurrent_score);
+
  private:
   Settings();
 
@@ -42,6 +49,8 @@ class Settings {
   std::vector<QColor> m_field;
   bool m_game_is_started;
   int m_record;
+  int m_points_to_1_ball;
+  int m_current_score;
 };
 
 #endif  // SETTINGS_H

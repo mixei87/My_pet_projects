@@ -24,5 +24,10 @@ Button {
         opacity: root.hovered ? 0.8 : 1
         radius: 8
     }
-    onClicked: gameBoard.model.newGame()
+    onClicked: {
+        gameBoard.model.setRecord()
+        gameBoard.model.newGame()
+        recordGame.text = gameBoard.model.record
+        scoreGame.text = gameBoard.model.score
+    }
 }
