@@ -1,7 +1,7 @@
 #include "model_game.h"
 
 GameModel::GameModel(QObject* parent) : QAbstractItemModel{parent} {
-  initialiseVariables();
+  newGame(Settings::getSettings().game_is_started());
   if (!Settings::getSettings().game_is_started()) {
     addRandomPoints();
   }
@@ -9,35 +9,37 @@ GameModel::GameModel(QObject* parent) : QAbstractItemModel{parent} {
 
 GameModel::~GameModel() { finishGame(); }
 
-void GameModel::newGame() {
-  Settings::getSettings().setGame_is_started(false);
+void GameModel::newGame(bool game_is_started) {
+  Settings::getSettings().setGame_is_started(game_is_started);
+  initialiseVariables();
+}
 
+void GameModel::initialiseVariables() {
   m_field.clear();
   m_free_tiles.clear();
   m_busy_tiles.clear();
   m_tiles_bingo.clear();
   m_few_free_points.clear();
 
-  for (int i = 0; i < Settings::getSettings().board_size(); ++i) {
-    m_field.push_back({Settings::getSettings().default_color(), QString{}});
-    m_free_tiles.insert(i);
-  }
+  bool game_is_started = Settings::getSettings().game_is_started();
+  fillGameBoard(game_is_started);
   m_selected_index = -1;
-  QModelIndex ind1 = GameModel::index(0, 0);
-  QModelIndex ind2 = GameModel::index(Settings::getSettings().board_size(), 0);
-  emit dataChanged(ind1, ind2);
-  addRandomPoints();
+  m_score = 0;
+  emit dataChanged(GameModel::index(0, 0),
+                   GameModel::index(Settings::getSettings().field().size(), 0));
 }
 
-void GameModel::initialiseVariables() {
+void GameModel::fillGameBoard(bool game_is_started) {
+  QColor default_color = Settings::getSettings().default_color();
+  QColor color;
   for (size_t i = 0; i < Settings::getSettings().field().size(); ++i) {
-    m_field.push_back({Settings::getSettings().field()[i].first,
-                       Settings::getSettings().field()[i].second});
-    if (Settings::getSettings().field()[i].first ==
-        Settings::getSettings().default_color())
-      m_free_tiles.insert(i);
+    if (game_is_started)
+      color = Settings::getSettings().field()[i];
+    else
+      color = default_color;
+    m_field.push_back({color, QString{}});
+    if (color == default_color) m_free_tiles.insert(i);
   }
-  m_selected_index = -1;
 }
 
 int GameModel::height_field() const {

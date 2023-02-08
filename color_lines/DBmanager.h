@@ -29,6 +29,7 @@ class DBmanager {
     QString height_field = "height_field";
     QString width_field = "width_field";
     QString game_is_started = "game_is_started";
+    QString record = "record_game";
   } _table_settings;
 
   typedef struct _table_gameboard {

@@ -24,11 +24,12 @@ class Settings {
   void setWidth_field(int newWidth_field);
   bool game_is_started() const;
   void setGame_is_started(bool newGame_is_started);
-  int board_size() const;
-  void setBoard_size();
 
-  const std::vector<std::pair<QColor, QString>>& field() const;
+  const std::vector<QColor>& field() const;
   void setField(const int& index, const QColor color);
+
+  int record() const;
+  void setRecord(int newRecord);
 
  private:
   Settings();
@@ -38,9 +39,9 @@ class Settings {
   int m_points_in_row;
   int m_height_field;
   int m_width_field;
-  int m_board_size;
-  std::vector<std::pair<QColor, QString>> m_field;
+  std::vector<QColor> m_field;
   bool m_game_is_started;
+  int m_record;
 };
 
 #endif  // SETTINGS_H

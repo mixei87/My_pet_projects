@@ -27,14 +27,16 @@ bool DBmanager::createSettingsTable() {
   query.prepare(
       QString(
           "CREATE TABLE '%1' (%2 INTEGER PRIMARY KEY AUTOINCREMENT, %3 TEXT,"
-          "%4 INTEGER, %5 INTEGER, %6 INTEGER, %7 INTEGER, %8 BOOL);")
+          "%4 INTEGER, %5 INTEGER, %6 INTEGER, %7 INTEGER, %8 BOOL, %9 "
+          "INTEGER);")
           .arg(m_table_name_settings, m_tables->table_settings.id,
                m_tables->table_settings.default_color,
                m_tables->table_settings.count_next_balls,
                m_tables->table_settings.points_in_row,
                m_tables->table_settings.height_field,
                m_tables->table_settings.width_field,
-               m_tables->table_settings.game_is_started));
+               m_tables->table_settings.game_is_started,
+               m_tables->table_settings.record));
   if (!query.exec()) return false;
   return true;
 }
@@ -54,7 +56,7 @@ bool DBmanager::insertSettingsTable() {
   query.prepare(
       QString("INSERT INTO %1 (%2, %3, %4, %5, %6, %7, %8) VALUES(:id, "
               ":default_color, :count_next_balls, :points_in_row, "
-              ":height_field, :width_field, :game_is_started);")
+              ":height_field, :width_field, :game_is_started, 0);")
           .arg(m_table_name_settings, m_tables->table_settings.id,
                m_tables->table_settings.default_color,
                m_tables->table_settings.count_next_balls,
@@ -81,15 +83,16 @@ bool DBmanager::updateSettingsTable() {
   query.prepare(
       QString("UPDATE %1 SET %2 = :default_color, %3 = "
               ":count_next_balls, %4 = :points_in_row, %5 = "
-              ":height_field, %6 =:width_field, %7 = :game_is_started "
-              "WHERE %8 = :id;")
+              ":height_field, %6 =:width_field, %7 = :game_is_started, %8 = "
+              ":record "
+              "WHERE %9 = :id;")
           .arg(m_table_name_settings, m_tables->table_settings.default_color,
                m_tables->table_settings.count_next_balls,
                m_tables->table_settings.points_in_row,
                m_tables->table_settings.height_field,
                m_tables->table_settings.width_field,
                m_tables->table_settings.game_is_started,
-               m_tables->table_settings.id));
+               m_tables->table_settings.record, m_tables->table_settings.id));
   query.bindValue(":id", 1);
   query.bindValue(":default_color", Settings::getSettings().default_color());
   query.bindValue(":count_next_balls",
@@ -99,6 +102,7 @@ bool DBmanager::updateSettingsTable() {
   query.bindValue(":width_field", Settings::getSettings().width_field());
   query.bindValue(":game_is_started",
                   Settings::getSettings().game_is_started());
+  query.bindValue(":record", Settings::getSettings().record());
   if (!query.exec()) return false;
   return true;
 }
@@ -119,6 +123,7 @@ void DBmanager::selectSettingsTable() {
   int name_width_field = rec.indexOf(m_tables->table_settings.width_field);
   int name_game_is_started =
       rec.indexOf(m_tables->table_settings.game_is_started);
+  int name_record = rec.indexOf(m_tables->table_settings.record);
 
   Settings::getSettings().setDefault_color(
       query.value(name_default_color).value<QColor>());
@@ -131,6 +136,7 @@ void DBmanager::selectSettingsTable() {
   Settings::getSettings().setWidth_field(query.value(name_width_field).toInt());
   Settings::getSettings().setGame_is_started(
       query.value(name_game_is_started).toBool());
+  Settings::getSettings().setRecord(query.value(name_record).toInt());
 }
 
 bool DBmanager::createGameboardTable() {
@@ -150,9 +156,9 @@ bool DBmanager::insertGameboardTable() {
   QVariantList id;
   QVariantList index;
   QVariantList color;
-  for (int i = 0; i < Settings::getSettings().board_size(); ++i) {
-    id << i + 1;
-    index << i;
+  for (size_t i = 0; i < Settings::getSettings().field().size(); ++i) {
+    id << static_cast<int>(i + 1);
+    index << static_cast<int>(i);
     color << Settings::getSettings().default_color();
   }
 
@@ -195,7 +201,7 @@ bool DBmanager::updateGameboardTable() {
                            m_tables->table_gameboard.color,
                            m_tables->table_gameboard.index));
     query.bindValue(":index", static_cast<int>(index));
-    query.bindValue(":color", Settings::getSettings().field()[index].first);
+    query.bindValue(":color", Settings::getSettings().field()[index]);
     if (!query.exec()) isUpdate = false;
   }
   return isUpdate;

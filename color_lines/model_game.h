@@ -29,7 +29,7 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE bool moveBall(int free_index);
   Q_INVOKABLE void changeSelectedBalls(int new_index);
   Q_INVOKABLE bool isGameOver();
-  Q_INVOKABLE void newGame();
+  Q_INVOKABLE void newGame(bool game_is_started = false);
 
  private:
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
@@ -42,6 +42,7 @@ class GameModel : public QAbstractItemModel {
   QHash<int, QByteArray> roleNames() const override;
 
   void initialiseVariables();
+  void fillGameBoard(bool game_is_started);
   void getRandomPoints();
   void clearBingoRows();
   int setIndexFromCoord(const int& i, const int& j) const;
@@ -56,19 +57,16 @@ class GameModel : public QAbstractItemModel {
 
   std::vector<std::pair<QColor, QString>> m_field;
   int m_selected_index;
-
+  int m_score;
   std::unordered_set<int> m_free_tiles;
   std::unordered_set<int> m_busy_tiles;
   std::unordered_set<int> m_tiles_bingo;
-
   std::vector<int> m_few_free_points;
-
   std::unordered_map<int, QColor> m_colors{
       {0, QColorConstants::Svg::deeppink},
       {1, QColorConstants::Svg::mediumseagreen},
       {2, QColorConstants::Svg::cornflowerblue},
       {3, QColorConstants::Svg::gold}};
-
   std::unordered_map<QString, std::pair<int, int>> m_directions{
       {"right", {0, 1}},
       {"down", {1, 0}},

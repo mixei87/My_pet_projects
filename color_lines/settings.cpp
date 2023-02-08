@@ -6,9 +6,9 @@ Settings::Settings()
       m_points_in_row{5},
       m_height_field{9},
       m_width_field{9},
-      m_board_size{m_height_field * m_width_field},
-      m_field(m_board_size, {m_default_color, {}}),
-      m_game_is_started{false} {}
+      m_field(m_height_field * m_width_field, {m_default_color}),
+      m_game_is_started{false},
+      m_record{0} {}
 
 Settings &Settings::getSettings() {
   static Settings m_settings;
@@ -51,18 +51,12 @@ void Settings::setGame_is_started(bool newGame_is_started) {
   m_game_is_started = newGame_is_started;
 }
 
-int Settings::board_size() const { return m_board_size; }
-
-void Settings::setBoard_size() {
-  if (m_height_field > 0 && m_width_field > 0)
-    m_board_size = m_height_field * m_width_field;
-}
-
-const std::vector<std::pair<QColor, QString> > &Settings::field() const {
-  return m_field;
-}
+const std::vector<QColor> &Settings::field() const { return m_field; }
 
 void Settings::setField(const int &index, const QColor color) {
-  m_field[index].first = color;
-  m_field[index].second = QString();
+  m_field[index] = color;
 }
+
+int Settings::record() const { return m_record; }
+
+void Settings::setRecord(int newRecord) { m_record = newRecord; }

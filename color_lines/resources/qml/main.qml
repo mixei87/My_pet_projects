@@ -31,6 +31,7 @@ Window {
         anchors.left: recordGame.right
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: root.width / 4.5
+
     }
 
     GameBoard {
