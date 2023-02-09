@@ -14,13 +14,13 @@ void GameModel::newGame(bool game_is_started) {
   }
 }
 
+QString GameModel::record() const {
+  return QString::number(Settings::getSettings().record());
+}
+
 void GameModel::setRecord() {
   if (m_score > Settings::getSettings().record())
     Settings::getSettings().setRecord(m_score);
-}
-
-QString GameModel::record() const {
-  return QString::number(Settings::getSettings().record());
 }
 
 void GameModel::initialiseVariables(const bool& game_is_started) {
@@ -115,12 +115,16 @@ void GameModel::checkLine(int i, int j, const int& d_i, const int& d_j,
 }
 
 void GameModel::clearBingoRows() {
+  int score = 0;
   for (const auto& cell : m_tiles_bingo) {
     m_field[cell].first = Settings::getSettings().default_color();
     m_busy_tiles.erase(cell);
     m_free_tiles.insert(cell);
-    m_score += Settings::getSettings().points_to_1_ball();
+    score += Settings::getSettings().points_to_1_ball();
   }
+  m_score += score;
+  emit scoreChanged();
+  //  setScore(score);
   emitDataChanged(m_tiles_bingo);
   m_tiles_bingo.clear();
 }
@@ -249,4 +253,4 @@ void GameModel::finishGame() {
   }
 }
 
-QString GameModel::score() const { return QString::number(m_score); }
+int GameModel::score() const { return m_score; }

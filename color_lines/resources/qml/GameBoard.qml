@@ -1,7 +1,5 @@
 import QtQuick 2.0
 import Game 1.0
-import QtQuick.Controls
-import QtQuick.Dialogs
 
 GridView {
     id: root
@@ -26,11 +24,11 @@ GridView {
                         if (!root.model.checkLines()) {
                             root.model.addRandomPoints()
                         } else {
-                            scoreGame.text = root.model.score
+
+                            //                            scoreGame.text = root.model.score
                         }
                     }
                     if (root.model.isGameOver()) {
-                        root.model.setRecord()
                         recordGame.text = root.model.record
                         dialogFinishGame.visible = true
                         root.model.changeSelectedBalls(model.index)
@@ -48,7 +46,6 @@ GridView {
                     onClicked: {
                         root.model.changeSelectedBalls(model.index)
                         if (root.model.isGameOver()) {
-                            root.model.setRecord()
                             recordGame.text = root.model.record
                             dialogFinishGame.visible = true
                             root.model.changeSelectedBalls(model.index)

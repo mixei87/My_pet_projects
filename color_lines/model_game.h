@@ -21,6 +21,11 @@ class GameModel : public QAbstractItemModel {
   GameModel(QObject* parent = nullptr);
   ~GameModel();
 
+  Q_PROPERTY(int height_field READ height_field CONSTANT)
+  Q_PROPERTY(int width_field READ width_field CONSTANT)
+  Q_PROPERTY(int score READ score NOTIFY scoreChanged)
+  Q_PROPERTY(QString record READ record CONSTANT)
+
   int height_field() const;
   int width_field() const;
 
@@ -33,7 +38,10 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE void setRecord();
 
   QString record() const;
-  QString score() const;
+  int score() const;
+
+ signals:
+  void scoreChanged();
 
  private:
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
@@ -76,11 +84,6 @@ class GameModel : public QAbstractItemModel {
       {"down", {1, 0}},
       {"left_down_diagonal", {1, -1}},
       {"right_down_diagonal", {1, 1}}};
-
-  Q_PROPERTY(int height_field READ height_field CONSTANT)
-  Q_PROPERTY(int width_field READ width_field CONSTANT)
-  Q_PROPERTY(QString score READ score CONSTANT)
-  Q_PROPERTY(QString record READ record CONSTANT)
 };
 
 #endif  // MODEL_GAME_H

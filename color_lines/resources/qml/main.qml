@@ -1,9 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Templates
 
-//import QtQuick.Dialogs
 Window {
     id: root
     width: 750
@@ -24,7 +20,6 @@ Window {
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: root.width / 10
     }
-
     LabelRecord {
         id: recordGame
         text: gameBoard.model.record
@@ -43,7 +38,8 @@ Window {
 
     LabelRecord {
         id: scoreGame
-        text: gameBoard.model.score
+        score: gameBoard.model.score
+        text: score
         anchors.left: labelScoreGame.right
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: 20
