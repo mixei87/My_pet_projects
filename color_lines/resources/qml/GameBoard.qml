@@ -91,13 +91,23 @@ GridView {
                     Transition {
                         from: ""
                         to: "appear"
-                        NumberAnimation {
-                            id: animationAppear
-                            target: ball
-                            properties: "opacity"
-                            from: 0
-                            to: 1
-                            duration: 1500
+                        ParallelAnimation {
+                            NumberAnimation {
+                                id: animationAppearOpacity
+                                target: ball
+                                properties: "opacity"
+                                from: 0
+                                to: 1
+                                duration: 150
+                            }
+                            NumberAnimation {
+                                id: animationAppearScale
+                                target: ball
+                                properties: "scale"
+                                from: 0
+                                to: 1
+                                duration: 200
+                            }
                         }
                     }
                 ]

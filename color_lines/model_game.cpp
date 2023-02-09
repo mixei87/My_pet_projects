@@ -68,11 +68,12 @@ void GameModel::addRandomPoints() {
     auto gen = std::mt19937{std::random_device{}()};
     std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
     m_field[n].first = m_colors[color(gen)];
-    m_field[new_index].second = "appear";
+    m_field[n].second = "appear";
+    qDebug() << "appear index[" << n << "]";
     m_free_tiles.erase(n);
     m_busy_tiles.insert(n);
+    emitDataChanged(n);
   }
-  emitDataChanged(m_few_free_points);
   checkLines();
 }
 
