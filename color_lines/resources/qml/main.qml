@@ -22,7 +22,7 @@ Window {
     }
     LabelRecord {
         id: recordGame
-        text: gameBoard.model.record
+        score: gameBoard.model.record
         anchors.left: labelRecordGame.right
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: 20
@@ -39,7 +39,6 @@ Window {
     LabelRecord {
         id: scoreGame
         score: gameBoard.model.score
-        text: score
         anchors.left: labelScoreGame.right
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: 20

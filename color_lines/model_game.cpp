@@ -14,14 +14,18 @@ void GameModel::newGame(bool game_is_started) {
   }
 }
 
-QString GameModel::record() const {
-  return QString::number(Settings::getSettings().record());
-}
+int GameModel::record() const { return Settings::getSettings().record(); }
 
 void GameModel::setRecord() {
-  if (m_score > Settings::getSettings().record())
+  if (m_score > Settings::getSettings().record()) {
+    qDebug() << "m_score:" << m_score
+             << "record:" << Settings::getSettings().record();
     Settings::getSettings().setRecord(m_score);
+    emit recordChanged();
+  }
 }
+
+int GameModel::score() const { return m_score; }
 
 void GameModel::initialiseVariables(const bool& game_is_started) {
   m_field.clear();
@@ -252,5 +256,3 @@ void GameModel::finishGame() {
     Settings::getSettings().setCurrent_score(0);
   }
 }
-
-int GameModel::score() const { return m_score; }
