@@ -18,8 +18,6 @@ int GameModel::record() const { return Settings::getSettings().record(); }
 
 void GameModel::setRecord() {
   if (m_score > Settings::getSettings().record()) {
-    qDebug() << "m_score:" << m_score
-             << "record:" << Settings::getSettings().record();
     Settings::getSettings().setRecord(m_score);
     emit recordChanged();
   }
@@ -70,6 +68,7 @@ void GameModel::addRandomPoints() {
     auto gen = std::mt19937{std::random_device{}()};
     std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
     m_field[n].first = m_colors[color(gen)];
+    m_field[new_index].second = "appear";
     m_free_tiles.erase(n);
     m_busy_tiles.insert(n);
   }
@@ -78,6 +77,8 @@ void GameModel::addRandomPoints() {
 }
 
 bool GameModel::checkLines() {
+  bool isNeedAddRandomPoints = true;
+  m_tiles_bingo.clear();
   for (int i = 0; i < Settings::getSettings().height_field(); ++i) {
     for (int j = 0; j < Settings::getSettings().width_field(); ++j) {
       checkDirection(i, j, m_directions["right"]);
@@ -89,9 +90,9 @@ bool GameModel::checkLines() {
   }
   if (m_tiles_bingo.size()) {
     clearBingoRows();
-    return true;
+    isNeedAddRandomPoints = false;
   }
-  return false;
+  return isNeedAddRandomPoints;
 }
 
 void GameModel::checkDirection(const int& i, const int& j,
@@ -119,52 +120,53 @@ void GameModel::checkLine(int i, int j, const int& d_i, const int& d_j,
 }
 
 void GameModel::clearBingoRows() {
-  int score = 0;
   for (const auto& cell : m_tiles_bingo) {
     m_field[cell].first = Settings::getSettings().default_color();
     m_busy_tiles.erase(cell);
     m_free_tiles.insert(cell);
-    score += Settings::getSettings().points_to_1_ball();
+    m_score += Settings::getSettings().points_to_1_ball();
   }
-  m_score += score;
   emit scoreChanged();
-  //  setScore(score);
   emitDataChanged(m_tiles_bingo);
-  m_tiles_bingo.clear();
 }
 
-bool GameModel::moveBall(int free_index) {
-  if (m_selected_index == -1) return false;
+void GameModel::moveBall(int free_index) {
   Settings::getSettings().setGame_is_started(true);
   m_field[m_selected_index].second = "";
-  emitDataChanged(m_selected_index);
   swap(m_field[m_selected_index], m_field[free_index]);
   m_busy_tiles.erase(m_selected_index);
   m_busy_tiles.insert(free_index);
   m_free_tiles.erase(free_index);
   m_free_tiles.insert(m_selected_index);
-  std::vector<int> indexes{free_index, m_selected_index};
+  emitDataChanged(free_index);
+  emitDataChanged(m_selected_index);
   m_selected_index = -1;
-  emitDataChanged(indexes);
-  return true;
 }
 
-void GameModel::changeSelectedBalls(int new_index) {
-  if (new_index == m_selected_index) {
-    m_field[m_selected_index].second = "";
-    emitDataChanged(m_selected_index);
-    m_selected_index = -1;
+bool GameModel::changeSelectedBalls(int new_index) {
+  bool isNeedMoveBalls = false;
+  if (m_selected_index == -1 &&
+      m_field[new_index].first == Settings::getSettings().default_color()) {
+    ;
   } else if (m_selected_index == -1) {
     m_field[new_index].second = "clicked";
     emitDataChanged(new_index);
     m_selected_index = new_index;
-  } else {
+  } else if (new_index == m_selected_index) {
     m_field[m_selected_index].second = "";
     emitDataChanged(m_selected_index);
+    m_selected_index = -1;
+  } else if (m_field[new_index].first !=
+             Settings::getSettings().default_color()) {
+    m_field[m_selected_index].second = "";
     m_field[new_index].second = "clicked";
+    emitDataChanged(m_selected_index);
     emitDataChanged(new_index);
     m_selected_index = new_index;
+  } else {
+    isNeedMoveBalls = true;
   }
+  return isNeedMoveBalls;
 }
 
 bool GameModel::isGameOver() {

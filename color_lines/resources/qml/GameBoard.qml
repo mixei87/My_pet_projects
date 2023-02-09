@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Game 1.0
+import QtQuick.Controls 2.15
 
 GridView {
     id: root
@@ -10,6 +11,7 @@ GridView {
         id: backgroundDelegate
         width: root.cellWidth
         height: root.cellHeight
+
         Tile {
             id: tile
             anchors.fill: backgroundDelegate
@@ -20,15 +22,15 @@ GridView {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    if (root.model.moveBall(model.index)) {
-                        if (!root.model.checkLines()) {
+                    if (root.model.changeSelectedBalls(model.index)) {
+                        root.model.moveBall(model.index)
+                        if (root.model.checkLines()) {
                             root.model.addRandomPoints()
                         }
-                    }
-                    if (root.model.isGameOver()) {
-                        root.model.changeSelectedBalls(model.index)
-                        root.model.setRecord()
-                        dialogFinishGame.visible = true
+                        if (root.model.isGameOver()) {
+                            root.model.setRecord()
+                            dialogFinishGame.visible = true
+                        }
                     }
                 }
             }
@@ -37,21 +39,15 @@ GridView {
                 colorBall: model.display
                 state: model.selectedBallRole
                 visible: !Qt.colorEqual(model.display, "#000000")
-                MouseArea {
-                    id: mouseArea
-                    anchors.fill: parent
-                    onClicked: {
-                        root.model.changeSelectedBalls(model.index)
-                        if (root.model.isGameOver()) {
-                            root.model.setRecord()
-                            dialogFinishGame.visible = true
-                        }
-                    }
-                }
-
                 states: [
                     State {
                         name: "clicked"
+                        PropertyChanges {
+                            target: ball
+                        }
+                    },
+                    State {
+                        name: "appear"
                         PropertyChanges {
                             target: ball
                         }
@@ -67,7 +63,7 @@ GridView {
                 transitions: [
                     Transition {
                         id: transition_pulse
-                        from: "*"
+                        from: ""
                         to: "clicked"
                         SequentialAnimation {
                             id: pulseAnimation
@@ -90,7 +86,19 @@ GridView {
                     },
                     Transition {
                         from: "clicked"
-                        to: "*"
+                        to: ""
+                    },
+                    Transition {
+                        from: ""
+                        to: "appear"
+                        NumberAnimation {
+                            id: animationAppear
+                            target: ball
+                            properties: "opacity"
+                            from: 0
+                            to: 1
+                            duration: 1500
+                        }
                     }
                 ]
             }

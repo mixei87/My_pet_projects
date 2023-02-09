@@ -31,8 +31,8 @@ class GameModel : public QAbstractItemModel {
 
   Q_INVOKABLE void addRandomPoints();
   Q_INVOKABLE bool checkLines();
-  Q_INVOKABLE bool moveBall(int free_index);
-  Q_INVOKABLE void changeSelectedBalls(int new_index);
+  Q_INVOKABLE void moveBall(int free_index);
+  Q_INVOKABLE bool changeSelectedBalls(int new_index);
   Q_INVOKABLE bool isGameOver();
   Q_INVOKABLE void newGame(bool game_is_started = false);
   Q_INVOKABLE void setRecord();
