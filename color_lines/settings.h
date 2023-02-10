@@ -1,7 +1,6 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 #include <QColor>
-#include <QDebug>
 #include <QString>
 #include <vector>
 

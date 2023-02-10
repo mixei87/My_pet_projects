@@ -5,6 +5,10 @@ GameController::GameController(QObject* parent) : QObject(parent) {
   m_db->selectSettingsTable();
   m_db->selectGameBoardTable();
   m_gameModel = new GameModel();
+
+  //  if (!Settings::getSettings().game_is_started()) {
+  //    m_gameModel->addRandomPoints();
+  //  }
 }
 
 GameController::~GameController() {

@@ -32,10 +32,15 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE void addRandomPoints();
   Q_INVOKABLE bool checkLines();
   Q_INVOKABLE void moveBall(int free_index);
-  Q_INVOKABLE bool changeSelectedBalls(int new_index);
+  Q_INVOKABLE bool changeSelectedBalls(int new_index, int x, int y);
   Q_INVOKABLE bool isGameOver();
   Q_INVOKABLE void newGame(bool game_is_started = false);
   Q_INVOKABLE void setRecord();
+  Q_INVOKABLE bool game_is_started();
+  Q_INVOKABLE int widthBall();
+  Q_INVOKABLE void setWidthBall(int width);
+  Q_INVOKABLE int xSelectedBall();
+  Q_INVOKABLE int ySelectedBall();
 
   int record() const;
   int score() const;
@@ -67,14 +72,19 @@ class GameModel : public QAbstractItemModel {
   void emitDataChanged(const std::vector<int>& indexes);
   void emitDataChanged(const std::unordered_set<int>& indexes);
   void finishGame();
+  void setGame_is_started(const bool& isStarted);
+  void clearState(std::vector<int>& tiles);
 
   std::vector<std::pair<QColor, QString>> m_field;
   int m_selected_index;
   int m_score;
+  int x_selected_ball = 0;
+  int y_selected_ball = 0;
+  int m_width_ball;
   std::unordered_set<int> m_free_tiles;
   std::unordered_set<int> m_busy_tiles;
   std::unordered_set<int> m_tiles_bingo;
-  std::vector<int> m_few_free_points;
+  std::vector<int> m_few_free_tiles;
   std::unordered_map<int, QColor> m_colors{
       {0, QColorConstants::Svg::deeppink},
       {1, QColorConstants::Svg::mediumseagreen},
