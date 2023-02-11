@@ -26,6 +26,10 @@ void GameModel::setRecord() {
 int GameModel::score() const { return m_score; }
 
 void GameModel::initialiseVariables(const bool& game_is_started) {
+  m_x_from_ball = 0;
+  m_y_from_ball = 0;
+  m_x_to_ball = 0;
+  m_y_to_ball = 0;
   m_field.clear();
   m_free_tiles.clear();
   m_busy_tiles.clear();
@@ -37,8 +41,8 @@ void GameModel::initialiseVariables(const bool& game_is_started) {
     m_score = Settings::getSettings().current_score();
   else
     m_score = 0;
-  emit dataChanged(GameModel::index(0, 0),
-                   GameModel::index(Settings::getSettings().field().size(), 0));
+  emit dataChanged(GameModel::index(0),
+                   GameModel::index(Settings::getSettings().field().size()));
 }
 
 void GameModel::fillGameBoard(const bool& game_is_started) {
@@ -67,12 +71,12 @@ void GameModel::addRandomPoints() {
   for (const auto& n : m_few_free_tiles) {
     auto gen = std::mt19937{std::random_device{}()};
     std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
-    m_field[n].first = m_colors[color(gen)];
-    m_field[n].second = "appear";
+    GameModel::setData(GameModel::index(n), m_colors[color(gen)],
+                       m_displayRole);
+    GameModel::setData(GameModel::index(n), "appear", m_selectedBallRole);
     m_free_tiles.erase(n);
     m_busy_tiles.insert(n);
   }
-  emitDataChanged(m_few_free_tiles);
   clearState(m_few_free_tiles);
   checkLines();
 }
@@ -122,65 +126,64 @@ void GameModel::checkLine(int i, int j, const int& d_i, const int& d_j,
 
 void GameModel::clearBingoRows() {
   for (const auto& cell : m_tiles_bingo) {
-    m_field[cell].first = Settings::getSettings().default_color();
+    GameModel::setData(GameModel::index(cell),
+                       Settings::getSettings().default_color(), m_displayRole);
     m_busy_tiles.erase(cell);
     m_free_tiles.insert(cell);
     m_score += Settings::getSettings().points_to_1_ball();
   }
   emit scoreChanged();
-  emitDataChanged(m_tiles_bingo);
 }
 
-void GameModel::moveBall(int free_index) {
-  qDebug() << "moveBall:" << free_index;
-  Settings::getSettings().setGame_is_started(true);
-  m_field[m_selected_index].second = "";
-  emitDataChanged(m_selected_index);
-  m_field[m_selected_index].second = "move";
-  emitDataChanged(m_selected_index);
-  qDebug() << m_field[m_selected_index].second;
+bool GameModel::changeSelectedBalls(const int& new_index) {
+  qDebug() << "color" << m_field[new_index].first;
+  bool isNeedMoveBalls = false;
+  if (m_selected_index == -1 &&
+      m_field[new_index].first == Settings::getSettings().default_color()) {
+  } else if (m_selected_index == -1) {
+    GameModel::setData(GameModel::index(new_index), "clicked",
+                       m_selectedBallRole);
+    m_selected_index = new_index;
+  } else if (new_index == m_selected_index) {
+    GameModel::setData(GameModel::index(m_selected_index), "",
+                       m_selectedBallRole);
+    m_selected_index = -1;
+  } else if (m_field[new_index].first !=
+             Settings::getSettings().default_color()) {
+    GameModel::setData(GameModel::index(m_selected_index), "",
+                       m_selectedBallRole);
+    GameModel::setData(GameModel::index(new_index), "clicked",
+                       m_selectedBallRole);
+    m_selected_index = new_index;
+  } else {
+    isNeedMoveBalls = true;
+  }
+  return isNeedMoveBalls;
+}
 
+void GameModel::animationMoveBall(const int& free_index) {
+  //  m_x_to_ball = x;
+  //  m_y_to_ball = y;
+  Settings::getSettings().setGame_is_started(true);
+  GameModel::setData(GameModel::index(m_selected_index), "",
+                     m_selectedBallRole);
+  //  GameModel::setData(GameModel::index(m_selected_index), "move",
+  //                     m_selectedBallRole);
+  m_selected_index = free_index;
+}
+
+void GameModel::moveBall(const int& free_index) {
+  qDebug() << "moveBall";
   swap(m_field[m_selected_index], m_field[free_index]);
+  QModelIndex sel_i = GameModel::index(m_selected_index);
+  QModelIndex free_i = GameModel::index(free_index);
+  emit GameModel::dataChanged(sel_i, sel_i);
+  emit GameModel::dataChanged(free_i, free_i);
   m_busy_tiles.erase(m_selected_index);
   m_busy_tiles.insert(free_index);
   m_free_tiles.erase(free_index);
   m_free_tiles.insert(m_selected_index);
-  //  emitDataChanged(free_index);
-  //  emitDataChanged(m_selected_index);
   m_selected_index = -1;
-}
-
-bool GameModel::changeSelectedBalls(int new_index, int x, int y) {
-  qDebug() << "new_index:" << new_index << "x:" << x;
-  qDebug() << "m_selected_index" << m_selected_index;
-  bool isNeedMoveBalls = false;
-  if (m_selected_index == -1 &&
-      m_field[new_index].first == Settings::getSettings().default_color()) {
-    qDebug() << "new_index2:" << new_index;
-  } else if (m_selected_index == -1) {
-    m_field[new_index].second = "clicked";
-    emitDataChanged(new_index);
-    m_selected_index = new_index;
-    qDebug() << "m_selected_index" << m_selected_index;
-  } else if (new_index == m_selected_index) {
-    m_field[m_selected_index].second = "";
-    emitDataChanged(m_selected_index);
-    m_selected_index = -1;
-  } else if (m_field[new_index].first !=
-             Settings::getSettings().default_color()) {
-    m_field[m_selected_index].second = "";
-    m_field[new_index].second = "clicked";
-    emitDataChanged(m_selected_index);
-    emitDataChanged(new_index);
-    m_selected_index = new_index;
-  } else {
-    isNeedMoveBalls = true;
-    x_selected_ball = x;
-    y_selected_ball = y;
-    qDebug() << "x_selected_ball:" << x_selected_ball;
-  }
-  qDebug() << "isNeedMoveBalls:" << isNeedMoveBalls;
-  return isNeedMoveBalls;
 }
 
 bool GameModel::isGameOver() {
@@ -203,7 +206,6 @@ QVariant GameModel::data(const QModelIndex& index, int role) const {
     if (role == Qt::DisplayRole) {
       return m_field[index.row()].first;
     } else if (role == m_selectedBallRole) {
-      //      qDebug() << "data" << m_field[index.row()].second;
       return m_field[index.row()].second;
     }
   }
@@ -228,6 +230,18 @@ QHash<int, QByteArray> GameModel::roleNames() const {
   return roles;
 }
 
+bool GameModel::setData(const QModelIndex& index, const QVariant& value,
+                        int role) {
+  if (!index.isValid() || GameModel::data(index, role) == value) return false;
+  if (role == m_displayRole) {
+    m_field[index.row()].first = value.value<QColor>();
+  } else if (role == m_selectedBallRole) {
+    m_field[index.row()].second = value.value<QString>();
+  }
+  emit dataChanged(index, index, {role});
+  return true;
+}
+
 void GameModel::getRandomPoints() {
   m_few_free_tiles.clear();
   auto gen = std::mt19937{std::random_device{}()};
@@ -238,23 +252,6 @@ void GameModel::getRandomPoints() {
 
 int GameModel::setIndexFromCoord(const int& i, const int& j) const {
   return i * Settings::getSettings().height_field() + j;
-}
-
-void GameModel::emitDataChanged(const int& index) {
-  QModelIndex ind = GameModel::index(index, 0);
-  emit dataChanged(ind, ind);
-}
-
-void GameModel::emitDataChanged(const std::vector<int>& indexes) {
-  for (const auto& index : indexes) {
-    emitDataChanged(index);
-  }
-}
-
-void GameModel::emitDataChanged(const std::unordered_set<int>& indexes) {
-  for (const auto& index : indexes) {
-    emitDataChanged(index);
-  }
 }
 
 void GameModel::finishGame() {
@@ -278,13 +275,19 @@ bool GameModel::game_is_started() {
   return Settings::getSettings().game_is_started();
 }
 
-void GameModel::setWidthBall(int width) { m_width_ball = width; }
+void GameModel::setWidthBall(const int& width) { m_width_ball = width; }
+
+int GameModel::xFromBall() { return m_x_from_ball; }
+
+int GameModel::yFromBall() { return m_y_from_ball; }
+
+int GameModel::xToBall() { return m_x_to_ball; }
+
+int GameModel::yToBall() { return m_y_to_ball; }
+
+int GameModel::selectedIndex() { return m_selected_index; }
 
 int GameModel::widthBall() { return m_width_ball; }
-
-int GameModel::xSelectedBall() { return x_selected_ball; }
-
-int GameModel::ySelectedBall() { return y_selected_ball; }
 
 void GameModel::setGame_is_started(const bool& isGameStarted) {
   Settings::getSettings().setGame_is_started(isGameStarted);
