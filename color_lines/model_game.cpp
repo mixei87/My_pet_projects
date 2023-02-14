@@ -73,11 +73,12 @@ void GameModel::addRandomPoints() {
     std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
     GameModel::setData(GameModel::index(n), m_colors[color(gen)],
                        m_displayRole);
+    qDebug() << "m_field[n].second" << m_field[n].second;
     GameModel::setData(GameModel::index(n), "appear", m_selectedBallRole);
+    qDebug() << "m_field[n].second" << m_field[n].second << "index" << n;
     m_free_tiles.erase(n);
     m_busy_tiles.insert(n);
   }
-  clearState(m_few_free_tiles);
   checkLines();
 }
 
@@ -136,7 +137,6 @@ void GameModel::clearBingoRows() {
 }
 
 bool GameModel::changeSelectedBalls(const int& new_index) {
-  qDebug() << "color" << m_field[new_index].first;
   bool isNeedMoveBalls = false;
   if (m_selected_index == -1 &&
       m_field[new_index].first == Settings::getSettings().default_color()) {
@@ -156,34 +156,19 @@ bool GameModel::changeSelectedBalls(const int& new_index) {
                        m_selectedBallRole);
     m_selected_index = new_index;
   } else {
+    m_free_index = new_index;
     isNeedMoveBalls = true;
   }
   return isNeedMoveBalls;
 }
 
-void GameModel::animationMoveBall(const int& free_index) {
-  //  m_x_to_ball = x;
-  //  m_y_to_ball = y;
-  Settings::getSettings().setGame_is_started(true);
-  GameModel::setData(GameModel::index(m_selected_index), "",
-                     m_selectedBallRole);
-  //  GameModel::setData(GameModel::index(m_selected_index), "move",
-  //                     m_selectedBallRole);
-  m_selected_index = free_index;
-}
-
-void GameModel::moveBall(const int& free_index) {
-  qDebug() << "moveBall";
-  swap(m_field[m_selected_index], m_field[free_index]);
-  QModelIndex sel_i = GameModel::index(m_selected_index);
-  QModelIndex free_i = GameModel::index(free_index);
-  emit GameModel::dataChanged(sel_i, sel_i);
-  emit GameModel::dataChanged(free_i, free_i);
+void GameModel::swapBalls() {
   m_busy_tiles.erase(m_selected_index);
-  m_busy_tiles.insert(free_index);
-  m_free_tiles.erase(free_index);
+  m_busy_tiles.insert(m_free_index);
+  m_free_tiles.erase(m_free_index);
   m_free_tiles.insert(m_selected_index);
   m_selected_index = -1;
+  m_free_index = -1;
 }
 
 bool GameModel::isGameOver() {
@@ -242,6 +227,21 @@ bool GameModel::setData(const QModelIndex& index, const QVariant& value,
   return true;
 }
 
+QVariant GameModel::getColor(int index) { return m_field[index].first; }
+
+void GameModel::setColor(int index, QVariant newColor) {
+  if (m_field[index].first != newColor.value<QColor>()) {
+    GameModel::setData(GameModel::index(index), newColor.value<QColor>(),
+                       m_displayRole);
+  }
+}
+
+void GameModel::setState(int index, QString newState) {
+  if (m_field[index].second != newState) {
+    GameModel::setData(GameModel::index(index), newState, m_selectedBallRole);
+  }
+}
+
 void GameModel::getRandomPoints() {
   m_few_free_tiles.clear();
   auto gen = std::mt19937{std::random_device{}()};
@@ -287,12 +287,10 @@ int GameModel::yToBall() { return m_y_to_ball; }
 
 int GameModel::selectedIndex() { return m_selected_index; }
 
+int GameModel::freeIndex() { return m_free_index; }
+
 int GameModel::widthBall() { return m_width_ball; }
 
 void GameModel::setGame_is_started(const bool& isGameStarted) {
   Settings::getSettings().setGame_is_started(isGameStarted);
-}
-
-void GameModel::clearState(std::vector<int>& tiles) {
-  for (const auto& tile : tiles) m_field[tile].second = "";
 }

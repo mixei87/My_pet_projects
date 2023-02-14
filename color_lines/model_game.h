@@ -32,12 +32,12 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE void addRandomPoints();
   Q_INVOKABLE bool checkLines();
   Q_INVOKABLE bool changeSelectedBalls(const int& new_index);
-  Q_INVOKABLE void animationMoveBall(const int& free_index);
-  Q_INVOKABLE void moveBall(const int& selected_index);
+  Q_INVOKABLE void swapBalls();
   Q_INVOKABLE bool isGameOver();
   Q_INVOKABLE void newGame(bool game_is_started = false);
   Q_INVOKABLE void setRecord();
   Q_INVOKABLE bool game_is_started();
+  Q_INVOKABLE void setGame_is_started(const bool& isStarted);
   Q_INVOKABLE int widthBall();
   Q_INVOKABLE void setWidthBall(const int& width);
   Q_INVOKABLE int xFromBall();
@@ -45,6 +45,11 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE int xToBall();
   Q_INVOKABLE int yToBall();
   Q_INVOKABLE int selectedIndex();
+  Q_INVOKABLE int freeIndex();
+
+  Q_INVOKABLE QVariant getColor(int index);
+  Q_INVOKABLE void setColor(int index, QVariant newColor);
+  Q_INVOKABLE void setState(int index, QString newState);
 
   int record() const;
   int score() const;
@@ -58,12 +63,12 @@ class GameModel : public QAbstractItemModel {
   int columnCount(const QModelIndex& parent = QModelIndex()) const override;
   QVariant data(const QModelIndex& index,
                 int role = Qt::DisplayRole) const override;
+  bool setData(const QModelIndex& index, const QVariant& value,
+               int role = Qt::EditRole) override;
   QModelIndex index(int row, int column = 0,
                     const QModelIndex& parent = QModelIndex()) const override;
   QModelIndex parent(const QModelIndex& child) const override;
   QHash<int, QByteArray> roleNames() const override;
-  bool setData(const QModelIndex& index, const QVariant& value,
-               int role = Qt::EditRole) override;
 
   void initialiseVariables(const bool& game_is_started);
   void fillGameBoard(const bool& game_is_started);
@@ -74,15 +79,11 @@ class GameModel : public QAbstractItemModel {
                  int& points_in_line);
   void checkDirection(const int& i, const int& j,
                       const std::pair<int, int>& diff_indexes);
-  void emitDataChanged(const int& index);
-  void emitDataChanged(const std::vector<int>& indexes);
-  void emitDataChanged(const std::unordered_set<int>& indexes);
   void finishGame();
-  void setGame_is_started(const bool& isStarted);
-  void clearState(std::vector<int>& tiles);
 
   std::vector<std::pair<QColor, QString>> m_field;
   int m_selected_index;
+  int m_free_index;
   int m_score;
 
   int m_x_from_ball = 0;

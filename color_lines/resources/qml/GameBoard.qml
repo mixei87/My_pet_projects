@@ -13,8 +13,13 @@ GridView {
     property int tileHeight: itemHeight
     property int ballWidth: tileWidth * 0.9
     property int ballHeight: tileHeight * 0.9
+    property bool ballVisible
+    property int xfromBall: 0
+    property int yfromBall: 0
     property int xtoBall: 0
     property int ytoBall: 0
+    property var cur_item
+    property bool busy: false
 
     delegate: Item {
         id: item
@@ -37,10 +42,10 @@ GridView {
                 state: model.selectedBallRole
                 Text {
                     text: model.selectedBallRole + model.index
-                    color: "white"
+                    color: "black"
                 }
 
-                //                visible: !Qt.colorEqual(model.display, "#000000")
+                visible: !Qt.colorEqual(model.display, "#000000")
                 states: [
                     State {
                         name: ""
@@ -54,15 +59,6 @@ GridView {
                     },
                     State {
                         name: "appear"
-                    },
-                    State {
-                        name: "move"
-                        ParentChange {
-                            target: ball
-                            parent: root
-                            x: root.model.xToBall()
-                            y: root.model.yToBall()
-                        }
                     }
                 ]
 
@@ -93,70 +89,31 @@ GridView {
                     Transition {
                         from: ""
                         to: "appear"
-                        SequentialAnimation {
-                            ParallelAnimation {
-                                id: appearAnimation
-                                NumberAnimation {
-                                    id: appearOpacityAnimation
-                                    target: ball
-                                    properties: "opacity"
-                                    from: 0
-                                    to: 1
-                                    duration: 150
-                                }
-                                NumberAnimation {
-                                    id: appearScaleAnimation
-                                    target: ball
-                                    properties: "scale"
-                                    from: 0
-                                    to: 1
-                                    duration: 200
-                                }
-                            }
-                            ScriptAction {
-                                script: ball.state = ""
-                            }
-                        }
-                    },
-                    Transition {
-                        from: ""
-                        to: "move"
-                        SequentialAnimation {
-                            ParentAnimation {
-                                NumberAnimation {
-                                    id: moveAnimation2
-                                    target: ball
-                                    properties: "x,y"
-                                    duration: 1000
-                                    easing.type: Easing.InOutBack
-                                }
-                            }
-                            ScriptAction {
-                                script: root.model.moveBall(model.index)
+                        ParallelAnimation {
+                            id: appearAnimation
+                            NumberAnimation {
+                                id: appearOpacityAnimation
+                                target: ball
+                                properties: "opacity"
+                                from: 0
+                                to: 1
+                                duration: 150
                             }
                             NumberAnimation {
-                                id: moveAnimation3
+                                id: appearScaleAnimation
                                 target: ball
-                                properties: "visible"
-                                to: 0
+                                properties: "scale"
+                                from: 0
+                                to: 1
+                                duration: 200
+                            }
+                        }
+                        onRunningChanged: {
+                            if (!running) {
+                                root.model.setState(index, "")
                             }
                         }
                     }
-                    //                    ,
-                    //                    Transition {
-                    //                        from: "move"
-                    //                        to: ""
-                    //                        SequentialAnimation {
-                    //                            NumberAnimation {}
-                    //                            ScriptAction {
-                    //                                script: {
-                    //                                    if (root.model.checkLines()) {
-                    //                                        root.model.addRandomPoints()
-                    //                                    }
-                    //                                }
-                    //                            }
-                    //                        }
-                    //                    }
                 ]
             }
             MouseArea {
@@ -165,14 +122,8 @@ GridView {
                     if (root.model.changeSelectedBalls(model.index)) {
                         xtoBall = (item.width - ball.width) / 2 + item.x
                         ytoBall = (item.height - ball.height) / 2 + item.y
-                        root.model.animationMoveBall(model.index)
-                        ball.visible = false
+                        root.model.setGame_is_started(true)
                         animationBall.start()
-                        root.model.moveBall(model.index)
-                        //                        if (root.model.isGameOver()) {
-                        //                            root.model.setRecord()
-                        //                            dialogFinishGame.visible = true
-                        //                        }
                     } else {
                         xfromBall = (item.width - ball.width) / 2 + item.x
                         yfromBall = (item.height - ball.height) / 2 + item.y
@@ -183,10 +134,18 @@ GridView {
     }
     SequentialAnimation {
         id: animationBall
-        ParallelAnimation {
-            ScriptAction {
-                script: movedBall.visible = true
+        ScriptAction {
+            script: {
+                busy = true
+                var index = root.model.selectedIndex()
+                var color = root.model.getColor(index)
+                movedBall.color = color
+                movedBall.visible = true
+                root.model.setColor(index, "#000000")
+                root.model.setState(index, "")
             }
+        }
+        ParallelAnimation {
             PropertyAnimation {
                 target: movedBall
                 properties: "x"
@@ -203,14 +162,20 @@ GridView {
                 easing.type: Easing.InOutBack
                 duration: 600
             }
-            PropertyAnimation {
-                target: ball
-                properties: "colorBall"
-                to: "brown"
-            }
         }
         ScriptAction {
-            script: movedBall.visible = false
+            script: {
+                var index = root.model.freeIndex()
+                root.model.setColor(index, movedBall.color)
+                movedBall.visible = false
+                busy = false
+                root.model.swapBalls()
+                root.model.addRandomPoints()
+                if (root.model.isGameOver()) {
+                    root.model.setRecord()
+                    dialogFinishGame.visible = true
+                }
+            }
         }
     }
     Ball {
