@@ -9,49 +9,6 @@ Window {
     visible: true
     title: qsTr("Color Lines")
 
-    //    Item {
-    //        width: 200
-    //        height: 100
-
-    //        Rectangle {
-    //            id: redRect
-    //            width: 100
-    //            height: 100
-    //            color: "red"
-    //        }
-
-    //        Rectangle {
-    //            id: blueRect
-    //            x: redRect.width
-    //            width: 50
-    //            height: 50
-    //            color: "blue"
-
-    //            states: State {
-    //                name: "reparented"
-    //                ParentChange {
-    //                    target: blueRect
-    //                    parent: redRect
-    //                    x: 10
-    //                    y: 10
-    //                }
-    //            }
-
-    //            transitions: Transition {
-    //                ParentAnimation {
-    //                    NumberAnimation {
-    //                        properties: "x,y"
-    //                        duration: 1000
-    //                    }
-    //                }
-    //            }
-
-    //            MouseArea {
-    //                anchors.fill: parent
-    //                onClicked: blueRect.state = "reparented"
-    //            }
-    //        }
-    //    }
     ButtonNewGame {
         id: buttonNewGame
     }
@@ -65,13 +22,31 @@ Window {
     }
     LabelRecord {
         id: recordGame
-        score: gameBoard.model.record
+        record: gameBoard.model.record + state
         anchors.left: labelRecordGame.right
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: 20
+        Behavior on record {
+            SequentialAnimation {
+                NumberAnimation {
+                    target: recordGame
+                    properties: "scale"
+                    to: 1.3
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: recordGame
+                    properties: "scale"
+                    to: 1
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
     }
 
-    LabelRecord {
+    LabelScore {
         id: labelScoreGame
         text: "Score:"
         anchors.left: labelRecordGame.right
@@ -79,12 +54,30 @@ Window {
         anchors.leftMargin: root.width / 4.5
     }
 
-    LabelRecord {
+    LabelScore {
         id: scoreGame
         score: gameBoard.model.score
         anchors.left: labelScoreGame.right
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: 20
+        Behavior on score {
+            SequentialAnimation {
+                NumberAnimation {
+                    target: scoreGame
+                    properties: "scale"
+                    to: 1.2
+                    duration: 100
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: scoreGame
+                    properties: "scale"
+                    to: 1
+                    duration: 100
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
     }
 
     GameBoard {
@@ -94,67 +87,11 @@ Window {
         anchors.margins: 10
         width: Math.min(root.width, root.height) - 20
         height: width
+        interactive: false
     }
-    //    Rectangle {
-    //        id: movingBall
-    //        radius: parent.width
-    //        Text {
-    //            text: gameBoard.objectName
-    //        }
-    //        width: 100 //gameBoard.children[0].width
-    //        height: width
 
-    //        //        color: "green"
-    //        x: 100 //gameBoard.model.xSelectedBall()
-    //        y: 100
-    //        visible: true
-    //        MouseArea {
-    //            anchors.fill: parent
-    //            onClicked: {
-    //                console.log("move click, state =", state)
-    //                state = "move"
-    //                console.log("move click2, state =", state)
-    //                console.log("gameBoard.model.xSelectedBall() =",
-    //                            gameBoard.model.xSelectedBall())
-    //            }
-    //        }
-
-    //        states: [
-    //            State {
-    //                name: ""
-    //                PropertyChanges {
-    //                    target: movingBall
-    //                    x: gameBoard.model.xSelectedBall()
-    //                }
-    //            },
-    //            State {
-    //                name: "move"
-    //                PropertyChanges {
-    //                    target: movingBall
-    //                    x: gameBoard.model.xSelectedBall()
-    //                }
-    //            }
-    //        ]
-    //        transitions: [
-    //            Transition {
-    //                from: "*"
-    //                to: "move"
-    //                NumberAnimation {
-    //                    id: animation333
-    //                    target: movingBall
-    //                    properties: "x"
-    //                    duration: 1000
-    //                    easing.type: Easing.InOutBack
-    //                }
-    //                onRunningChanged: {
-    //                    if (!running)
-    //                        state = ""
-    //                }
-    //            }
-    //        ]
-    //    }
     Component.onCompleted: {
-        x = Screen.width * 2 / 3 - root.width / 8
+        x = Screen.width * 2.07 / 3
         y = Screen.height / 2 - root.height / 2
     }
 }

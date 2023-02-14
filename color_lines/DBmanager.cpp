@@ -157,7 +157,7 @@ void DBmanager::selectSettingsTable() {
   Settings::getSettings().setWidth_field(query.value(name_width_field).toInt());
   Settings::getSettings().setGame_is_started(
       query.value(name_game_is_started).toBool());
-  Settings::getSettings().setRecord(query.value(name_record).toInt());
+  Settings::getSettings().setRecordGame(query.value(name_record).toInt());
   Settings::getSettings().setPoints_to_1_ball(
       query.value(name_points_to_1_ball).toInt());
   Settings::getSettings().setCurrent_score(

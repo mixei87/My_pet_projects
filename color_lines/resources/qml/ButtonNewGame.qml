@@ -26,7 +26,5 @@ Button {
     onClicked: {
         gameBoard.model.setRecord()
         gameBoard.model.newGame()
-        recordGame.text = gameBoard.model.record
-        scoreGame.text = gameBoard.model.score
     }
 }

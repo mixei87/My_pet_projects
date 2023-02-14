@@ -4,44 +4,44 @@ import QtQuick.Controls 2.15
 
 GridView {
     id: root
-    cellHeight: root.height / root.model.height_field
     cellWidth: root.width / root.model.width_field
-    delegate: Item {
+    cellHeight: root.height / root.model.height_field
 
+    property int itemWidth: root.cellWidth
+    property int itemHeight: root.cellHeight
+    property int tileWidth: itemWidth
+    property int tileHeight: itemHeight
+    property int ballWidth: tileWidth * 0.9
+    property int ballHeight: tileHeight * 0.9
+    property int xfromBall: 0
+    property int yfromBall: 0
+    property int xtoBall: 0
+    property int ytoBall: 0
+    property bool busy: false
+
+    delegate: Item {
         id: item
-        width: root.cellWidth
-        height: root.cellHeight
+        width: itemWidth
+        height: itemHeight
+
         Tile {
             id: tile
             anchors.fill: item
-            anchors.margins: item.width * 0.03
+            anchors.margins: itemWidth * 0.03
             color: ((parseInt(
                          root.model.index / root.model.height_field) + root.model.index
                      % root.model.width_field) % 2) ? "#c0c0c0" : "#e3e3e3"
-
             Ball {
-
                 id: ball
-                width: tile.width * 0.9
-                height: tile.width * 0.9
                 anchors.centerIn: tile
-                //                anchors.centerIn: parent
+                width: ballWidth
+                height: ballHeight
                 colorBall: model.display
                 state: model.selectedBallRole
                 visible: !Qt.colorEqual(model.display, "#000000")
-                //                Behavior on x {
-                //                    NumberAnimation {
-                //                        duration: 400
-                //                        easing.type: Easing.InOutCubic
-                //                    }
-                //                }
                 states: [
                     State {
                         name: ""
-                        PropertyChanges {
-                            target: ball
-                            scale: 1
-                        }
                     },
                     State {
                         name: "clicked"
@@ -50,22 +50,14 @@ GridView {
                         name: "appear"
                     },
                     State {
-                        name: "move"
-
-                        ParentChange {
-                            target: ball
-                            parent: root
-                            x: root.model.xSelectedBall()
-                            y: root.model.ySelectedBall()
-                            scale: 1
-                        }
+                        name: "disappear"
                     }
                 ]
 
                 transitions: [
                     Transition {
                         id: transition_pulse
-                        from: ""
+                        from: "*"
                         to: "clicked"
                         SequentialAnimation {
                             id: pulseAnimation
@@ -87,69 +79,135 @@ GridView {
                         }
                     },
                     Transition {
-                        from: ""
-                        to: "appear"
-                        ParallelAnimation {
-                            id: appearAnimation
-                            NumberAnimation {
-                                id: appearOpacityAnimation
-                                target: ball
-                                properties: "opacity"
-                                from: 0
-                                to: 1
-                                duration: 150
-                            }
-                            NumberAnimation {
-                                id: appearScaleAnimation
-                                target: ball
-                                properties: "scale"
-                                from: 0
-                                to: 1
-                                duration: 200
-                            }
-                        }
-                        onRunningChanged: {
-                            if (!running)
-                                ball.state = ""
+                        from: "clicked"
+                        to: ""
+                        NumberAnimation {
+                            id: restoreAnimation
+                            target: ball
+                            properties: "scale"
+                            to: 1
                         }
                     },
                     Transition {
                         from: "*"
-                        to: "move"
-                        ParentAnimation {
+                        to: "appear"
+                        NumberAnimation {
+                            id: appearScaleAnimation
+                            target: ball
+                            properties: "scale"
+                            from: 0
+                            to: 1
+                            duration: 200
+                        }
+                    },
+                    Transition {
+                        from: "appear"
+                        to: ""
+                    },
+                    Transition {
+                        from: "*"
+                        to: "disappear"
+                        SequentialAnimation {
                             NumberAnimation {
-                                id: moveAnimation2
+                                id: bigScaleAnimation
                                 target: ball
-                                properties: "x,y"
-                                duration: 1000
-                                easing.type: Easing.InOutBack
+                                properties: "scale"
+                                to: 1.1
+                                duration: 200
+                            }
+                            NumberAnimation {
+                                id: disappearScaleAnimation
+                                target: ball
+                                properties: "scale"
+                                to: 0
+                                duration: 200
                             }
                         }
+                        onRunningChanged: {
+                            if (!running) {
+                                ball.scale = 1
+                                root.model.setColor(index, "#000000")
+                            }
+                        }
+                    },
+
+                    Transition {
+                        from: "disappear"
+                        to: ""
                     }
                 ]
             }
-
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    if (root.model.changeSelectedBalls(
-                                model.index,
-                                (item.width - ball.width) / 2 + item.x,
-                                (item.height - ball.height) / 2 + item.y)) {
-
-                        root.model.moveBall(model.index)
-                        if (root.model.checkLines()) {
-
-                            root.model.addRandomPoints()
-                        }
-                        if (root.model.isGameOver()) {
-                            root.model.setRecord()
-                            dialogFinishGame.visible = true
+                    if (!busy) {
+                        if (root.model.changeSelectedBalls(model.index)) {
+                            xtoBall = (item.width - ball.width) / 2 + item.x
+                            ytoBall = (item.height - ball.height) / 2 + item.y
+                            root.model.setGame_is_started(true)
+                            animationBall.start()
+                        } else {
+                            xfromBall = (item.width - ball.width) / 2 + item.x
+                            yfromBall = (item.height - ball.height) / 2 + item.y
                         }
                     }
                 }
             }
         }
+    }
+    SequentialAnimation {
+        id: animationBall
+        ScriptAction {
+            script: {
+                busy = true
+                var index = root.model.selectedIndex()
+                var color = root.model.getColor(index)
+                movedBall.color = color
+                movedBall.visible = true
+                root.model.setColor(index, "#000000")
+                root.model.setState(index, "")
+            }
+        }
+        ParallelAnimation {
+            PropertyAnimation {
+                target: movedBall
+                properties: "x"
+                from: xfromBall
+                to: xtoBall
+                easing.type: Easing.InOutBack
+                duration: 400
+            }
+            PropertyAnimation {
+                target: movedBall
+                properties: "y"
+                from: yfromBall
+                to: ytoBall
+                easing.type: Easing.InOutBack
+                duration: 400
+            }
+        }
+        ScriptAction {
+            script: {
+                var index = root.model.freeIndex()
+                root.model.setColor(index, movedBall.color)
+                movedBall.visible = false
+                root.model.swapBalls()
+                if (root.model.checkLines()) {
+                    root.model.addRandomPoints()
+                }
+                if (root.model.isGameOver()) {
+                    root.model.setRecord()
+                    dialogFinishGame.visible = true
+                }
+                busy = false
+            }
+        }
+    }
+    Ball {
+        id: movedBall
+        width: ballWidth
+        height: ballHeight
+        visible: false
     }
 
     DialogFinishGame {
@@ -163,10 +221,10 @@ GridView {
             }
         }
     }
-
     GameController_qml {
         id: gameController
     }
+
     Component.onCompleted: {
         root.model = gameController.getModel()
     }

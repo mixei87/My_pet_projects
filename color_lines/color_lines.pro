@@ -7,8 +7,8 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += main.cpp \
-    ../../my_pet_projects/color_lines/controller_game.cpp \
-    ../../my_pet_projects/color_lines/model_game.cpp \
+    controller_game.cpp \
+    model_game.cpp \
     DBmanager.cpp \
     settings.cpp
 
@@ -25,9 +25,8 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-HEADERS += \
-    ../../my_pet_projects/color_lines/controller_game.h \
-    ../../my_pet_projects/color_lines/model_game.h \
+HEADERS += controller_game.h \
+    model_game.h \
     DBmanager.h \
     settings.h
 
