@@ -5,7 +5,8 @@
 using namespace std;
 
 int main() {
-  ifstream fin("input.txt");
+  ifstream fin("03.txt");
+  ofstream fout("output.txt");
   char x;
   map<char, int> t;
   int max = 1;
@@ -17,16 +18,17 @@ int main() {
   for (int i = 0; i < max; ++i, --cur_max) {
     for (const auto& a : t) {
       if (a.second >= cur_max)
-        cout << "#";
+        fout << "#";
       else
-        cout << " ";
+        fout << " ";
     }
-    cout << "\n";
+    fout << "\n";
   }
   for (const auto& a : t) {
-    cout << a.first;
+    fout << a.first;
   }
 
   fin.close();
+  fout.close();
   return 0;
 }
