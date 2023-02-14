@@ -22,13 +22,31 @@ Window {
     }
     LabelRecord {
         id: recordGame
-        score: gameBoard.model.record
+        record: gameBoard.model.record + state
         anchors.left: labelRecordGame.right
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: 20
+        Behavior on record {
+            SequentialAnimation {
+                NumberAnimation {
+                    target: recordGame
+                    properties: "scale"
+                    to: 1.3
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: recordGame
+                    properties: "scale"
+                    to: 1
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
     }
 
-    LabelRecord {
+    LabelScore {
         id: labelScoreGame
         text: "Score:"
         anchors.left: labelRecordGame.right
@@ -36,12 +54,30 @@ Window {
         anchors.leftMargin: root.width / 4.5
     }
 
-    LabelRecord {
+    LabelScore {
         id: scoreGame
         score: gameBoard.model.score
         anchors.left: labelScoreGame.right
         anchors.verticalCenter: buttonNewGame.verticalCenter
         anchors.leftMargin: 20
+        Behavior on score {
+            SequentialAnimation {
+                NumberAnimation {
+                    target: scoreGame
+                    properties: "scale"
+                    to: 1.2
+                    duration: 100
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: scoreGame
+                    properties: "scale"
+                    to: 1
+                    duration: 100
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
     }
 
     GameBoard {
@@ -51,6 +87,7 @@ Window {
         anchors.margins: 10
         width: Math.min(root.width, root.height) - 20
         height: width
+        interactive: false
     }
 
     Component.onCompleted: {

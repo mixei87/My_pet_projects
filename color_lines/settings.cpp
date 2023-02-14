@@ -61,7 +61,7 @@ void Settings::setField(const int &index, const QColor color) {
 
 int Settings::record() const { return m_record; }
 
-void Settings::setRecord(int newRecord) { m_record = newRecord; }
+void Settings::setRecordGame(int newRecord) { m_record = newRecord; }
 
 int Settings::points_to_1_ball() const { return m_points_to_1_ball; }
 

@@ -28,7 +28,7 @@ class Settings {
   void setField(const int& index, const QColor color);
 
   int record() const;
-  void setRecord(int newRecord);
+  void setRecordGame(int newRecord);
 
   int points_to_1_ball() const;
 

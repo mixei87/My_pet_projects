@@ -13,12 +13,10 @@ GridView {
     property int tileHeight: itemHeight
     property int ballWidth: tileWidth * 0.9
     property int ballHeight: tileHeight * 0.9
-    property bool ballVisible
     property int xfromBall: 0
     property int yfromBall: 0
     property int xtoBall: 0
     property int ytoBall: 0
-    property var cur_item
     property bool busy: false
 
     delegate: Item {
@@ -40,32 +38,26 @@ GridView {
                 height: ballHeight
                 colorBall: model.display
                 state: model.selectedBallRole
-                Text {
-                    text: model.selectedBallRole + model.index
-                    color: "black"
-                }
-
                 visible: !Qt.colorEqual(model.display, "#000000")
                 states: [
                     State {
                         name: ""
-                        PropertyChanges {
-                            target: ball
-                            scale: 1
-                        }
                     },
                     State {
                         name: "clicked"
                     },
                     State {
                         name: "appear"
+                    },
+                    State {
+                        name: "disappear"
                     }
                 ]
 
                 transitions: [
                     Transition {
                         id: transition_pulse
-                        from: ""
+                        from: "*"
                         to: "clicked"
                         SequentialAnimation {
                             id: pulseAnimation
@@ -87,46 +79,77 @@ GridView {
                         }
                     },
                     Transition {
-                        from: ""
+                        from: "clicked"
+                        to: ""
+                        NumberAnimation {
+                            id: restoreAnimation
+                            target: ball
+                            properties: "scale"
+                            to: 1
+                        }
+                    },
+                    Transition {
+                        from: "*"
                         to: "appear"
-                        ParallelAnimation {
-                            id: appearAnimation
+                        NumberAnimation {
+                            id: appearScaleAnimation
+                            target: ball
+                            properties: "scale"
+                            from: 0
+                            to: 1
+                            duration: 200
+                        }
+                    },
+                    Transition {
+                        from: "appear"
+                        to: ""
+                    },
+                    Transition {
+                        from: "*"
+                        to: "disappear"
+                        SequentialAnimation {
                             NumberAnimation {
-                                id: appearOpacityAnimation
-                                target: ball
-                                properties: "opacity"
-                                from: 0
-                                to: 1
-                                duration: 150
-                            }
-                            NumberAnimation {
-                                id: appearScaleAnimation
+                                id: bigScaleAnimation
                                 target: ball
                                 properties: "scale"
-                                from: 0
-                                to: 1
+                                to: 1.1
+                                duration: 200
+                            }
+                            NumberAnimation {
+                                id: disappearScaleAnimation
+                                target: ball
+                                properties: "scale"
+                                to: 0
                                 duration: 200
                             }
                         }
                         onRunningChanged: {
                             if (!running) {
-                                root.model.setState(index, "")
+                                ball.scale = 1
+                                root.model.setColor(index, "#000000")
                             }
                         }
+                    },
+
+                    Transition {
+                        from: "disappear"
+                        to: ""
                     }
                 ]
             }
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    if (root.model.changeSelectedBalls(model.index)) {
-                        xtoBall = (item.width - ball.width) / 2 + item.x
-                        ytoBall = (item.height - ball.height) / 2 + item.y
-                        root.model.setGame_is_started(true)
-                        animationBall.start()
-                    } else {
-                        xfromBall = (item.width - ball.width) / 2 + item.x
-                        yfromBall = (item.height - ball.height) / 2 + item.y
+                    if (!busy) {
+                        if (root.model.changeSelectedBalls(model.index)) {
+                            xtoBall = (item.width - ball.width) / 2 + item.x
+                            ytoBall = (item.height - ball.height) / 2 + item.y
+                            root.model.setGame_is_started(true)
+                            animationBall.start()
+                        } else {
+                            xfromBall = (item.width - ball.width) / 2 + item.x
+                            yfromBall = (item.height - ball.height) / 2 + item.y
+                        }
                     }
                 }
             }
@@ -152,7 +175,7 @@ GridView {
                 from: xfromBall
                 to: xtoBall
                 easing.type: Easing.InOutBack
-                duration: 600
+                duration: 400
             }
             PropertyAnimation {
                 target: movedBall
@@ -160,7 +183,7 @@ GridView {
                 from: yfromBall
                 to: ytoBall
                 easing.type: Easing.InOutBack
-                duration: 600
+                duration: 400
             }
         }
         ScriptAction {
@@ -168,21 +191,20 @@ GridView {
                 var index = root.model.freeIndex()
                 root.model.setColor(index, movedBall.color)
                 movedBall.visible = false
-                busy = false
                 root.model.swapBalls()
-                root.model.addRandomPoints()
+                if (root.model.checkLines()) {
+                    root.model.addRandomPoints()
+                }
                 if (root.model.isGameOver()) {
                     root.model.setRecord()
                     dialogFinishGame.visible = true
                 }
+                busy = false
             }
         }
     }
     Ball {
         id: movedBall
-        color: "grey"
-        x: 0
-        y: 0
         width: ballWidth
         height: ballHeight
         visible: false

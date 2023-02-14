@@ -23,7 +23,7 @@ class GameModel : public QAbstractItemModel {
 
   Q_PROPERTY(int height_field READ height_field CONSTANT)
   Q_PROPERTY(int width_field READ width_field CONSTANT)
-  Q_PROPERTY(int score READ score NOTIFY scoreChanged)
+  Q_PROPERTY(int score READ score WRITE setScore NOTIFY scoreChanged)
   Q_PROPERTY(int record READ record NOTIFY recordChanged)
 
   int height_field() const;
@@ -38,12 +38,6 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE void setRecord();
   Q_INVOKABLE bool game_is_started();
   Q_INVOKABLE void setGame_is_started(const bool& isStarted);
-  Q_INVOKABLE int widthBall();
-  Q_INVOKABLE void setWidthBall(const int& width);
-  Q_INVOKABLE int xFromBall();
-  Q_INVOKABLE int yFromBall();
-  Q_INVOKABLE int xToBall();
-  Q_INVOKABLE int yToBall();
   Q_INVOKABLE int selectedIndex();
   Q_INVOKABLE int freeIndex();
 
@@ -53,6 +47,7 @@ class GameModel : public QAbstractItemModel {
 
   int record() const;
   int score() const;
+  void setScore(int newScore);
 
  signals:
   void scoreChanged();
@@ -86,12 +81,6 @@ class GameModel : public QAbstractItemModel {
   int m_free_index;
   int m_score;
 
-  int m_x_from_ball = 0;
-  int m_y_from_ball = 0;
-  int m_x_to_ball = 0;
-  int m_y_to_ball = 0;
-
-  int m_width_ball;
   std::unordered_set<int> m_free_tiles;
   std::unordered_set<int> m_busy_tiles;
   std::unordered_set<int> m_tiles_bingo;

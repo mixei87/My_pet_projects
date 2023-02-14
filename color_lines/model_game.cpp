@@ -18,29 +18,31 @@ int GameModel::record() const { return Settings::getSettings().record(); }
 
 void GameModel::setRecord() {
   if (m_score > Settings::getSettings().record()) {
-    Settings::getSettings().setRecord(m_score);
+    Settings::getSettings().setRecordGame(m_score);
     emit recordChanged();
   }
 }
 
 int GameModel::score() const { return m_score; }
 
+void GameModel::setScore(int newScore) {
+  m_score = newScore;
+  emit scoreChanged();
+}
+
 void GameModel::initialiseVariables(const bool& game_is_started) {
-  m_x_from_ball = 0;
-  m_y_from_ball = 0;
-  m_x_to_ball = 0;
-  m_y_to_ball = 0;
   m_field.clear();
   m_free_tiles.clear();
   m_busy_tiles.clear();
   m_tiles_bingo.clear();
   m_few_free_tiles.clear();
   fillGameBoard(game_is_started);
+  m_free_index = -1;
   m_selected_index = -1;
   if (game_is_started)
-    m_score = Settings::getSettings().current_score();
+    setScore(Settings::getSettings().current_score());
   else
-    m_score = 0;
+    setScore(0);
   emit dataChanged(GameModel::index(0),
                    GameModel::index(Settings::getSettings().field().size()));
 }
@@ -71,11 +73,9 @@ void GameModel::addRandomPoints() {
   for (const auto& n : m_few_free_tiles) {
     auto gen = std::mt19937{std::random_device{}()};
     std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
-    GameModel::setData(GameModel::index(n), m_colors[color(gen)],
-                       m_displayRole);
-    qDebug() << "m_field[n].second" << m_field[n].second;
-    GameModel::setData(GameModel::index(n), "appear", m_selectedBallRole);
-    qDebug() << "m_field[n].second" << m_field[n].second << "index" << n;
+    m_field[n].first = m_colors[color(gen)];
+    m_field[n].second = "appear";
+    emit dataChanged(GameModel::index(n), GameModel::index(n));
     m_free_tiles.erase(n);
     m_busy_tiles.insert(n);
   }
@@ -127,13 +127,13 @@ void GameModel::checkLine(int i, int j, const int& d_i, const int& d_j,
 
 void GameModel::clearBingoRows() {
   for (const auto& cell : m_tiles_bingo) {
-    GameModel::setData(GameModel::index(cell),
-                       Settings::getSettings().default_color(), m_displayRole);
+    GameModel::setData(GameModel::index(cell), "disappear", m_selectedBallRole);
     m_busy_tiles.erase(cell);
     m_free_tiles.insert(cell);
     m_score += Settings::getSettings().points_to_1_ball();
   }
   emit scoreChanged();
+  setRecord();
 }
 
 bool GameModel::changeSelectedBalls(const int& new_index) {
@@ -275,21 +275,9 @@ bool GameModel::game_is_started() {
   return Settings::getSettings().game_is_started();
 }
 
-void GameModel::setWidthBall(const int& width) { m_width_ball = width; }
-
-int GameModel::xFromBall() { return m_x_from_ball; }
-
-int GameModel::yFromBall() { return m_y_from_ball; }
-
-int GameModel::xToBall() { return m_x_to_ball; }
-
-int GameModel::yToBall() { return m_y_to_ball; }
-
 int GameModel::selectedIndex() { return m_selected_index; }
 
 int GameModel::freeIndex() { return m_free_index; }
-
-int GameModel::widthBall() { return m_width_ball; }
 
 void GameModel::setGame_is_started(const bool& isGameStarted) {
   Settings::getSettings().setGame_is_started(isGameStarted);
