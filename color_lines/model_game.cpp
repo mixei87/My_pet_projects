@@ -73,13 +73,21 @@ void GameModel::addRandomPoints() {
   for (const auto& n : m_few_free_tiles) {
     auto gen = std::mt19937{std::random_device{}()};
     std::uniform_int_distribution<std::mt19937::result_type> color(0, 3);
-    m_field[n].first = m_colors[color(gen)];
-    m_field[n].second = "appear";
-    emit dataChanged(GameModel::index(n), GameModel::index(n));
+    GameModel::setData(GameModel::index(n), m_colors[color(gen)],
+                       m_displayRole);
+    GameModel::setData(GameModel::index(n), "appear", m_selectedBallRole);
     m_free_tiles.erase(n);
     m_busy_tiles.insert(n);
   }
   checkLines();
+}
+
+void GameModel::clearStateAtFirst() {
+  for (auto& ball : m_field) {
+    ball.second = "";
+  }
+  emit dataChanged(GameModel::index(0),
+                   GameModel::index(Settings::getSettings().field().size()));
 }
 
 bool GameModel::checkLines() {

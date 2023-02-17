@@ -1,14 +1,15 @@
 #include "controller_game.h"
 
 GameController::GameController(QObject* parent) : QObject(parent) {
-  m_db = new DBmanager(QDir::currentPath() + "/../resources/game.db");
+#if defined(Q_OS_MAC)
+  QString prefix = "/../resources/";
+#elif defined(Q_OS_LINUX)
+//    QString prefix = "C:\\User\\...\\Code\\Database\\";
+#endif
+  m_db = new DBmanager(QDir::currentPath() + prefix + "game.db");
   m_db->selectSettingsTable();
   m_db->selectGameBoardTable();
   m_gameModel = new GameModel();
-
-  //  if (!Settings::getSettings().game_is_started()) {
-  //    m_gameModel->addRandomPoints();
-  //  }
 }
 
 GameController::~GameController() {

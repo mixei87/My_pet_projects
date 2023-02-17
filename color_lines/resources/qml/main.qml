@@ -91,7 +91,7 @@ Window {
     }
 
     Component.onCompleted: {
-        x = Screen.width * 2.07 / 3
+        x = Screen.width / 2 - root.width / 2
         y = Screen.height / 2 - root.height / 2
     }
 }

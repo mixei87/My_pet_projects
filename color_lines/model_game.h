@@ -40,6 +40,7 @@ class GameModel : public QAbstractItemModel {
   Q_INVOKABLE void setGame_is_started(const bool& isStarted);
   Q_INVOKABLE int selectedIndex();
   Q_INVOKABLE int freeIndex();
+  Q_INVOKABLE void clearStateAtFirst();
 
   Q_INVOKABLE QVariant getColor(int index);
   Q_INVOKABLE void setColor(int index, QVariant newColor);
