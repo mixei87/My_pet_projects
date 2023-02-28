@@ -8,6 +8,5 @@
         <file>resources/qml/ButtonNewGame.qml</file>
         <file>resources/qml/LabelRecord.qml</file>
         <file>resources/qml/LabelScore.qml</file>
-        <file>resources/game.db</file>
     </qresource>
 </RCC>

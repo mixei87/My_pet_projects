@@ -4,13 +4,16 @@ DBmanager::DBmanager(const QString &path) {
   m_db = QSqlDatabase::addDatabase("QSQLITE");
   m_db.setDatabaseName(path);
   m_tables = new _table_and_columns;
-  if (!m_db.open()) qDebug() << "Error: fail connection with database";
-  if (isTableNotExist(m_table_name_settings)) {
-    if (createSettingsTable()) insertSettingsTable();
-  }
-  if (isTableNotExist(m_table_name_gameboard)) {
-    if (createGameboardTable()) {
-      insertGameboardTable();
+  if (m_db.open()) {
+    if (!isTableExist(m_table_name_settings)) {
+      if (createSettingsTable()) {
+        insertSettingsTable();
+      }
+    }
+    if (!isTableExist(m_table_name_gameboard)) {
+      if (createGameboardTable()) {
+        insertGameboardTable();
+      }
     }
   }
 }
@@ -39,18 +42,18 @@ bool DBmanager::createSettingsTable() {
                m_tables->table_settings.record,
                m_tables->table_settings.points_to_1_ball,
                m_tables->table_settings.current_score));
-  if (!query.exec()) return false;
-  return true;
+  if (query.exec()) return true;
+  return false;
 }
 
-bool DBmanager::isTableNotExist(const QString &table) {
+bool DBmanager::isTableExist(const QString &table) {
   QSqlQuery query;
   query.prepare(QString("SELECT name FROM sqlite_schema WHERE type = 'table' "
                         "AND name = '%1';")
                     .arg(table));
   query.exec();
-  if (query.next()) return false;
-  return true;
+  if (query.next()) return true;
+  return false;
 }
 
 bool DBmanager::insertSettingsTable() {
@@ -216,10 +219,9 @@ void DBmanager::selectGameBoardTable() {
 }
 
 bool DBmanager::updateGameboardTable() {
-  bool isUpdate = true && Settings::getSettings().field().size();
-
-  for (size_t index = 0; index < Settings::getSettings().field().size();
-       ++index) {
+  bool isUpdate = Settings::getSettings().field().size();
+  for (size_t index = 0;
+       isUpdate && index < Settings::getSettings().field().size(); ++index) {
     QSqlQuery query;
     query.prepare(QString("UPDATE %1 SET %2 = :color WHERE %3 = :index;")
                       .arg(m_table_name_gameboard,

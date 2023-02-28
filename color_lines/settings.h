@@ -1,5 +1,6 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
+
 #include <QColor>
 #include <QString>
 #include <vector>
@@ -26,14 +27,10 @@ class Settings {
 
   const std::vector<QColor>& field() const;
   void setField(const int& index, const QColor color);
-
   int record() const;
   void setRecordGame(int newRecord);
-
   int points_to_1_ball() const;
-
   void setPoints_to_1_ball(int newPoints_to_1_ball);
-
   int current_score() const;
   void setCurrent_score(int newCurrent_score);
 

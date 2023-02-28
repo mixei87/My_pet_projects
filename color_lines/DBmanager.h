@@ -2,7 +2,6 @@
 #define DBMANAGER_H
 
 #include <QColor>
-#include <QDebug>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -49,7 +48,7 @@ class DBmanager {
   bool createSettingsTable();
   bool insertSettingsTable();
 
-  bool isTableNotExist(const QString &table);
+  bool isTableExist(const QString &table);
 
   bool createGameboardTable();
   bool insertGameboardTable();
