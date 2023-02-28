@@ -6,12 +6,14 @@
 #include "model_game.h"
 
 int main(int argc, char *argv[]) {
+  Q_INIT_RESOURCE(qml);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
   QGuiApplication app(argc, argv);
 
   qmlRegisterType<GameController>("Game", 1, 0, "GameController_qml");
+  qmlRegisterType<GameModel>("Game", 1, 0, "Gamemodel_qml");
 
   QQmlApplicationEngine engine;
   const QUrl url(QStringLiteral("qrc:/resources/qml/main.qml"));

@@ -1,12 +1,10 @@
 #include "controller_game.h"
 
+#include <QFile>
+
 GameController::GameController(QObject* parent) : QObject(parent) {
-#if defined(Q_OS_MAC)
-  QString prefix = "/../resources/";
-#elif defined(Q_OS_LINUX)
-//    QString prefix = "C:\\User\\...\\Code\\Database\\";
-#endif
-  m_db = new DBmanager(QDir::currentPath() + prefix + "game.db");
+  QFile::copy(":/resources/game.db", QDir::currentPath() + "/game.db");
+  m_db = new DBmanager(QDir::currentPath() + "/game.db");
   m_db->selectSettingsTable();
   m_db->selectGameBoardTable();
   m_gameModel = new GameModel();

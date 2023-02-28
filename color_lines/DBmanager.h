@@ -2,6 +2,7 @@
 #define DBMANAGER_H
 
 #include <QColor>
+#include <QDebug>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
